@@ -1,7 +1,12 @@
 import 'package:cartridge_keeper/domain/entity/cartridge.dart';
 
 class Cartridge extends CartridgeEntity {
-  Cartridge({super.mark, required super.model, required super.inventoryNumber});
+  Cartridge({
+    super.mark,
+    required super.model,
+    required super.inventoryNumber,
+    super.id,
+  });
 
   Map<String, dynamic> toMap() => {
         'mark': mark,
@@ -10,6 +15,7 @@ class Cartridge extends CartridgeEntity {
       };
 
   factory Cartridge.fromMap(Map<String, dynamic> json) => Cartridge(
+        id: json['id'] as int,
         mark: json['mark'],
         model: json['model'],
         inventoryNumber: json['inventory_number'],

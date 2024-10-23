@@ -1,11 +1,12 @@
 class PrinterEntity {
-  late int id;
+  final int? id;
   final String mark;
   final String model;
 
   PrinterEntity({
     required this.mark,
     required this.model,
+    this.id
   });
 }
 

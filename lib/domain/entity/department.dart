@@ -1,8 +1,11 @@
 class DepartmentEntity {
-  late int id;
+  int id;
   final String name;
 
-  DepartmentEntity({required this.name});
+  DepartmentEntity({
+    this.id = 0,
+    required this.name,
+  });
 }
 
 enum DepartmentEnum {

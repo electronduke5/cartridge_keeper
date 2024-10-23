@@ -2,6 +2,7 @@ import 'package:cartridge_keeper/domain/entity/office.dart';
 
 class Office extends OfficeEntity {
   Office({
+    super.id,
     super.officeNumber,
     required super.departmentId,
     required super.printerId,
@@ -14,6 +15,7 @@ class Office extends OfficeEntity {
       };
 
   factory Office.fromMap(Map<String, dynamic> json) => Office(
+        id: json['id'] as int,
         officeNumber: json['office_number'],
         departmentId: json['department_id'] as int,
         printerId: json['printer_id'] as int,

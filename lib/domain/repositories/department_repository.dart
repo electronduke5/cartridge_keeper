@@ -1,5 +1,8 @@
 import 'package:cartridge_keeper/data/models/department.dart';
+import 'package:dartz/dartz.dart';
+
+import '../../common/failure.dart';
 
 abstract class DepartmentRepository{
-  Future<List<Department>> getAllDepartments();
+  Future<Either<Failure, List<Department>>> getAllDepartments();
 }

@@ -1,9 +1,12 @@
+import 'package:cartridge_keeper/common/failure.dart';
+import 'package:dartz/dartz.dart';
+
 import '../../data/models/cartridge.dart';
 
 abstract class CartridgeRepository {
-  Future<List<Cartridge>> getAllCartridges();
+  Future<Either<Failure, List<Cartridge>>> getAllCartridges();
 
-  Future<Cartridge> createCartridge({
+  Future<Either<Failure, Cartridge>> createCartridge({
     String mark,
     required String model,
     String inventoryNumber,
@@ -12,7 +15,7 @@ abstract class CartridgeRepository {
   ///Списание в утиль
   Future<void> deleteCartridge(int id);
 
-  Future<Cartridge?> updatePrinter({
+  Future<Either<Failure, Cartridge>> updatePrinter({
     required int id,
     String? mark,
     required String model,

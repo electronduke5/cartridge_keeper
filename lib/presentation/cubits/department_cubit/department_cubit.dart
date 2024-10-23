@@ -1,0 +1,29 @@
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
+import 'package:cartridge_keeper/presentation/di/app_module.dart';
+
+import '../../../data/models/department.dart';
+
+part 'department_state.dart';
+
+class DepartmentCubit extends Cubit<DepartmentState> {
+  DepartmentCubit() : super(const DepartmentState());
+
+  final _repository = AppModule.getDepartmentRepository();
+
+  Future<void> loadAllDepartments() async {
+    emit(state.copyWith(getDepartmentsState: ModelState.loading()));
+    try {
+      var result = await _repository.getAllDepartments();
+      result.fold(
+          (l) => emit(
+              state.copyWith(getDepartmentsState: ModelState.failed(l.error))),
+          (r) =>
+              emit(state.copyWith(getDepartmentsState: ModelState.loaded(r))));
+    } catch (error) {
+      emit(state.copyWith(
+          getDepartmentsState: ModelState.failed(error.toString())));
+    }
+  }
+}

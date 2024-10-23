@@ -6,14 +6,12 @@ import 'package:sqflite/sqflite.dart';
 mixin DatabaseService<T extends Object> {
   Future<Either<Failure, List<T>>> getAll(
       {required T Function(Map<String, dynamic>) fromMap,
-        required String table}) async {
+      required String table}) async {
     try {
-      Database db = DatabaseHelper.instance.db;
-      final response = await db.query(table);
+      final response = await DatabaseHelper.instance.queryAllRows(table);
 
-      List<T> listT = response.isNotEmpty
-          ? response.map((element) => fromMap(element)).toList()
-          : [];
+      print('res!!!!!!:   $response');
+      List<T> listT =  response.map((element) => fromMap(element)).toList();
 
       return Right(listT);
     } on DatabaseException catch (error) {
@@ -27,9 +25,8 @@ mixin DatabaseService<T extends Object> {
     required int id,
   }) async {
     try {
-      Database db = DatabaseHelper.instance.db;
-      final response = await db.query(table, where: 'id = ?', whereArgs: [id]);
-      return Right(fromMap(response.first));
+      final response = await DatabaseHelper.instance.queryById(id, table);
+      return Right(fromMap(response));
     } on DatabaseException catch (error) {
       return Left(Failure(error, error.toString()));
     }
@@ -41,17 +38,8 @@ mixin DatabaseService<T extends Object> {
     required Map<String, dynamic> data,
   }) async {
     try {
-      Database db = DatabaseHelper.instance.db;
-      int createdId = await db.insert(table, data);
-      final response = await getById(
-        fromMap: fromMap,
-        table: table,
-        id: createdId,
-      );
-      return response.fold(
-            (l) => Left(l),
-            (r) => Right(r),
-      );
+      final response = await DatabaseHelper.instance.insert(data, table);
+      return Right(fromMap(response));
     } on DatabaseException catch (error) {
       return Left(Failure(error, error.toString()));
     }
@@ -64,18 +52,8 @@ mixin DatabaseService<T extends Object> {
     required int id,
   }) async {
     try {
-      Database db = DatabaseHelper.instance.db;
-      int updatedId =
-      await db.update(table, data, where: 'id = ?', whereArgs: [id]);
-      final response = await getById(
-        fromMap: fromMap,
-        table: table,
-        id: updatedId,
-      );
-      return response.fold(
-            (l) => Left(l),
-            (r) => Right(r),
-      );
+      final response = await DatabaseHelper.instance.update(id, data, table);
+      return Right(fromMap(response));
     } on DatabaseException catch (error) {
       return Left(Failure(error, error.toString()));
     }

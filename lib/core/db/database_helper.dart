@@ -21,27 +21,47 @@ class DatabaseHelper {
   final int _version = 1;
   late final String _pathDB;
   late final Directory _appDocumentDirectory;
-  late final Database database;
+  static Database? _database;
 
-  Database get db  => instance.db;
+  Future<Database> get database async => _database ??= await _init();
 
-  Future<void> init() async {
+  Future<Database> _init() async {
     _appDocumentDirectory =
         await path_provider.getApplicationDocumentsDirectory();
     _pathDB = path.join(_appDocumentDirectory.path, DatabaseRequest.dbName);
-    print('Path DB: $_pathDB');
 
-    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-      sqfliteFfiInit();
-      database = await databaseFactoryFfi.openDatabase(
-        _pathDB,
-        options: OpenDatabaseOptions(
-          version: _version,
-          onCreate: (db, version) => onCreateTable(db),
-          onUpgrade: (db, oldVersion, newVersion) => onUpdateTable(db),
-        ),
-      );
-    }
+    sqfliteFfiInit();
+    return _database = await databaseFactoryFfi.openDatabase(
+      _pathDB,
+      options: OpenDatabaseOptions(
+        version: _version,
+        onCreate: (db, version) => onCreateTable(db),
+        onUpgrade: (db, oldVersion, newVersion) => onUpdateTable(db),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> insert(Map<String, dynamic> data, String table) async {
+    Database db = await instance.database;
+    int createdId = await db.insert(table, data);
+    return await queryById(createdId, table);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllRows(String table) async {
+    Database db = await instance.database;
+    return await db.query(table);
+  }
+
+  Future<Map<String, dynamic>> update(int id, Map<String, dynamic> data, String table) async {
+    Database db = await instance.database;
+    await db.update(table, data, where: 'id = ?', whereArgs: [id]);
+    return await queryById(id, table);
+  }
+
+  Future<Map<String,dynamic>> queryById(int id, String table) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> result = await db.query(table, where: 'id = ?', whereArgs: [id]);
+    return result.first;
   }
 
   Future<void> onInitTable(Database db) async {
@@ -71,7 +91,7 @@ class DatabaseHelper {
   }
 
   Future<void> onDropDatabase() async {
-    database.close();
+    await instance.database.then((db) => db.close());
 
     if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       sqfliteFfiInit();

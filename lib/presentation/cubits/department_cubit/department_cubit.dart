@@ -14,16 +14,19 @@ class DepartmentCubit extends Cubit<DepartmentState> {
 
   Future<void> loadAllDepartments() async {
     emit(state.copyWith(getDepartmentsState: ModelState.loading()));
-    try {
-      var result = await _repository.getAllDepartments();
-      result.fold(
-          (l) => emit(
-              state.copyWith(getDepartmentsState: ModelState.failed(l.error))),
-          (r) =>
-              emit(state.copyWith(getDepartmentsState: ModelState.loaded(r))));
-    } catch (error) {
-      emit(state.copyWith(
-          getDepartmentsState: ModelState.failed(error.toString())));
-    }
+
+    var result = await _repository.getAllDepartments();
+    result.fold(
+      (l) => emit(
+        state.copyWith(
+          getDepartmentsState: ModelState.failed(l.error),
+        ),
+      ),
+      (r) => emit(
+        state.copyWith(
+          getDepartmentsState: ModelState.loaded(r),
+        ),
+      ),
+    );
   }
 }

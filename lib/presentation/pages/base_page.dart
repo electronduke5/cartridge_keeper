@@ -1,3 +1,4 @@
+import 'package:cartridge_keeper/presentation/widgets/menu_icon_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/menu_widget.dart';
@@ -12,12 +13,12 @@ class BasePage extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          const Flexible(
-            flex: 1,
-            child: MenuWidget(),
-          ),
-          Flexible(
-            flex: 3,
+          SizedBox(
+              width: MediaQuery.sizeOf(context).width > 710 ? 180 : 60,
+              child: MediaQuery.sizeOf(context).width > 710
+                  ? MenuWidget()
+                  : const MenuIconWidget()),
+          Expanded(
             child: child,
           ),
         ],

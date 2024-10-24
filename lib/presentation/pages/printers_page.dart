@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/printer.dart';
 
-class StartPage extends StatelessWidget {
-  const StartPage({super.key});
+class PrintersPage extends StatelessWidget {
+  const PrintersPage({super.key});
 
   @override
   Widget build(BuildContext context) {

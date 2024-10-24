@@ -51,7 +51,8 @@ class _MenuWidgetState extends State<MenuWidget> {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding:
+                                const EdgeInsets.only(left: 10.0, right: 10.0),
                             child: ListTile(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),

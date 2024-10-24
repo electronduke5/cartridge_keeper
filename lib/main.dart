@@ -32,6 +32,18 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: const Color(0xFF4880FF),
         scaffoldBackgroundColor: const Color(0xFF1B2431),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4880FF),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+              iconColor: Colors.white),
+        ),
         listTileTheme: const ListTileThemeData(
           selectedTileColor: Color(0xFF4880FF),
           selectedColor: Colors.white,

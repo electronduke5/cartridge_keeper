@@ -12,7 +12,7 @@ class CartridgeCubit extends Cubit<CartridgeState> {
 
   final _repository = AppModule.getCartridgeRepository();
 
-  Future<void> loadAllPrinters() async {
+  Future<void> loadAllCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
     await _repository.getAllCartridges().then(

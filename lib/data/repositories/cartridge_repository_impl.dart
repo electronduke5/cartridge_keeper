@@ -23,9 +23,12 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<void> deleteCartridge(int id) {
-    // TODO: implement deleteCartridge
-    throw UnimplementedError();
+  Future<Either<Failure, String>> deleteCartridge(int id) async {
+    final resultDelete = await deleteObject(
+      id: id,
+      table: DatabaseRequest.tableCartridges,
+    );
+    return resultDelete.fold((l) => Left(l), (r) => Right(r));
   }
 
   @override
@@ -60,4 +63,31 @@ class CartridgeRepositoryImpl
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, Cartridge?>> getCartridgeById(int id) async {
+    return await getObjectById(
+      id: id,
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+    ).then(
+      (value) => value.fold(
+        (l) => Left(l),
+        (r) => Right(r),
+      ),
+    );
+  }
+
+// @override
+// Future<Either<Failure, Cartridge?>> getCartridgeByColumn( String columnName, dynamic columnValue) async {
+//   return await getObjectByColumn(
+//     columnName: columnName,
+//     columnValue: columnValue,
+//     table: DatabaseRequest.tableCartridges,
+//     fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+//   ).then((value) => value.fold(
+//         (l) => Left(l),
+//         (r) => Right(r),
+//       ));
+// }
 }

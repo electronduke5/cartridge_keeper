@@ -16,8 +16,6 @@ class PrintersPage extends StatelessWidget {
           Expanded(
             child: BlocBuilder<PrinterCubit, PrinterState>(
               builder: (context, state) {
-                debugPrint(state.getPrintersState.toString());
-
                 switch (state.getPrintersState) {
                   case IdleState _:
                     return const Center(child: CircularProgressIndicator());
@@ -61,8 +59,11 @@ class PrintersPage extends StatelessWidget {
                                   clipBehavior: Clip.antiAlias,
                                   border: TableBorder(
                                       borderRadius: BorderRadius.circular(15)),
-                                  headingRowColor: const WidgetStatePropertyAll(
-                                      Color(0xFF323D4E)),
+                                  headingRowColor: WidgetStatePropertyAll(
+                                      Theme.of(context)
+                                          .cardTheme
+                                          .color
+                                          ?.withOpacity(0.5)),
                                   columns: const [
                                     DataColumn(label: Text('ID')),
                                     DataColumn(label: Text('Марка')),
@@ -71,8 +72,10 @@ class PrintersPage extends StatelessWidget {
                                   rows: state.getPrintersState.item!
                                       .map(
                                         (printer) => DataRow(
-                                          color: const WidgetStatePropertyAll(
-                                              Color(0xFF273142)),
+                                          color: WidgetStatePropertyAll(
+                                              Theme.of(context)
+                                                  .cardTheme
+                                                  .color),
                                           cells: [
                                             DataCell(
                                                 Text(printer.id.toString())),

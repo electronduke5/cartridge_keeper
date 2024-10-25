@@ -19,8 +19,8 @@ class DatabaseHelper {
   DatabaseHelper._instance();
 
   final int _version = 1;
-  late final String _pathDB;
-  late final Directory _appDocumentDirectory;
+  static String? _pathDB;
+  static Directory? _appDocumentDirectory;
   static Database? _database;
 
   Future<Database> get database async => _database ??= await _init();
@@ -28,11 +28,11 @@ class DatabaseHelper {
   Future<Database> _init() async {
     _appDocumentDirectory =
         await path_provider.getApplicationDocumentsDirectory();
-    _pathDB = path.join(_appDocumentDirectory.path, DatabaseRequest.dbName);
+    _pathDB = path.join(_appDocumentDirectory!.path, DatabaseRequest.dbName);
 
     sqfliteFfiInit();
     return _database = await databaseFactoryFfi.openDatabase(
-      _pathDB,
+      _pathDB!,
       options: OpenDatabaseOptions(
         version: _version,
         onCreate: (db, version) => onCreateTable(db),
@@ -41,7 +41,8 @@ class DatabaseHelper {
     );
   }
 
-  Future<Map<String, dynamic>> insert(Map<String, dynamic> data, String table) async {
+  Future<Map<String, dynamic>> insert(
+      Map<String, dynamic> data, String table) async {
     Database db = await instance.database;
     int createdId = await db.insert(table, data);
     return await queryById(createdId, table);
@@ -52,17 +53,30 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
-  Future<Map<String, dynamic>> update(int id, Map<String, dynamic> data, String table) async {
+  Future<Map<String, dynamic>> update(
+      int id, Map<String, dynamic> data, String table) async {
     Database db = await instance.database;
     await db.update(table, data, where: 'id = ?', whereArgs: [id]);
     return await queryById(id, table);
   }
 
-  Future<Map<String,dynamic>> queryById(int id, String table) async {
+  Future<int> delete(int id, String table) async {
     Database db = await instance.database;
-    List<Map<String, dynamic>> result = await db.query(table, where: 'id = ?', whereArgs: [id]);
+    return await db.delete(table, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<Map<String, dynamic>> queryById(int id, String table) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> result =
+        await db.query(table, where: 'id = ?', whereArgs: [id]);
     return result.first;
   }
+
+  // Future<Map<String,dynamic>> queryByColumn(String table, String columnName, dynamic columnValue) async {
+  //   Database db = await instance.database;
+  //   List<Map<String, dynamic>> result = await db.query(table, where: '$columnName = ?', whereArgs: [columnValue]);
+  //   return result.first;
+  // }
 
   Future<void> onInitTable(Database db) async {
     try {
@@ -95,9 +109,9 @@ class DatabaseHelper {
 
     if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       sqfliteFfiInit();
-      databaseFactoryFfi.deleteDatabase(_pathDB);
+      databaseFactoryFfi.deleteDatabase(_pathDB!);
     } else {
-      deleteDatabase(_pathDB);
+      deleteDatabase(_pathDB!);
     }
   }
 

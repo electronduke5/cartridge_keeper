@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartridge_keeper/core/navigation_service.dart';
 import 'package:cartridge_keeper/presentation/cubits/menu_cubit/menu_cubit.dart';
+import 'package:cartridge_keeper/presentation/cubits/printer_cubit/printer_cubit.dart';
 import 'package:cartridge_keeper/presentation/di/app_module.dart';
 import 'package:cartridge_keeper/presentation/pages/base_page.dart';
 import 'package:flutter/material.dart';
@@ -29,20 +30,47 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorKey: NavigationService.navigatorKey,
       themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark().copyWith(
-        primaryColor: const Color(0xFF4880FF),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        inputDecorationTheme: InputDecorationTheme(
+          border: const OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color(0xFF4880FF).withOpacity(0.6),
+              width: 2,
+            ),
+          ),
+          labelStyle: const TextStyle(
+            color: Colors.white,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: const Color(0xFF4880FF).withOpacity(0.2),
+            ),
+          ),
+        ),
+        fontFamily: GoogleFonts.rubik().fontFamily,
+        primaryColorDark: const Color(0xFF4880FF),
+        dialogTheme: DialogTheme(
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          backgroundColor: const Color(0xFF273142),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
         scaffoldBackgroundColor: const Color(0xFF1B2431),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4880FF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
-              iconColor: Colors.white),
+            backgroundColor: const Color(0xFF4880FF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            foregroundColor: Colors.white,
+          ),
         ),
         listTileTheme: const ListTileThemeData(
           selectedTileColor: Color(0xFF4880FF),
@@ -66,18 +94,41 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+        listTileTheme: ListTileThemeData(
+          selectedTileColor: const Color(0xFF4880FF),
+          selectedColor: Colors.white,
+          tileColor: Theme.of(context).cardTheme.color,
+        ),
         primaryColor: const Color(0xFF4880FF),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF4880FF),
           primary: const Color(0xFF4880FF),
+        ),
+        dialogTheme: DialogTheme(
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F6FA),
         useMaterial3: true,
       ),
       initialRoute: '/printers',
       onGenerateRoute: (settings) => NavigationService.generateRoute(settings),
-      builder: (context, child) => BlocProvider<MenuCubit>(
-        create: (context) => MenuCubit(),
+      builder: (context, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider<MenuCubit>(
+            create: (context) => MenuCubit(),
+          ),
+          BlocProvider<PrinterCubit>(
+            create: (context) => PrinterCubit()..loadAllPrinters(),
+          ),
+        ],
         child: BasePage(child: child!),
       ),
     );

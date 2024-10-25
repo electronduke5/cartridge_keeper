@@ -21,7 +21,7 @@ class _MenuWidgetState extends State<MenuWidget> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(0),
       ),
-      color: const Color(0xFF273142),
+      color: Theme.of(context).cardTheme.color,
       child: Column(
         children: [
           Padding(

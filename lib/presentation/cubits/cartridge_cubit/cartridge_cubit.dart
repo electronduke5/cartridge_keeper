@@ -12,16 +12,25 @@ class CartridgeCubit extends Cubit<CartridgeState> {
 
   final _repository = AppModule.getCartridgeRepository();
 
+  Future changeMark(String? mark) async {
+    emit(state.copyWith(mark: mark));
+  }
+
+  Future changeModel(String model) async {
+    emit(state.copyWith(model: model));
+  }
+
+  Future changeInventoryNumber(String? inventoryNumber) async {
+    emit(state.copyWith(inventoryNumber: inventoryNumber));
+  }
+
   Future<void> loadAllCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
     await _repository.getAllCartridges().then(
           (result) => result.fold(
             (l) => emit(
-              state.copyWith(
-                getCartridgesState: ModelState.failed(l.error),
-              ),
-            ),
+                state.copyWith(getCartridgesState: ModelState.failed(l.error))),
             (r) => emit(
               state.copyWith(
                 getCartridgesState: ModelState.loaded(r),
@@ -35,45 +44,117 @@ class CartridgeCubit extends Cubit<CartridgeState> {
       {String? mark, required String model, String? inventoryNumber}) async {
     emit(state.copyWith(createCartridgeState: ModelState.loading()));
 
+    if (mark == '') {
+      mark = null;
+    }
+    if (inventoryNumber == '') {
+      inventoryNumber = null;
+    }
     await _repository
         .createCartridge(
-            mark: mark!, model: model, inventoryNumber: inventoryNumber!)
+            mark: mark, model: model, inventoryNumber: inventoryNumber)
         .then(
+          (result) => result.fold(
+            (l) {
+              emit(
+                state.copyWith(
+                  createCartridgeState: ModelState.failed(
+                    l.errorCode == 2067
+                        ? 'Картридж с таким инвентаризационным номером: ${state.inventoryNumber} уже есть!'
+                        : l.error,
+                  ),
+                ),
+              );
+              emit(
+                state.copyWith(createCartridgeState: ModelState.idle()),
+              );
+            },
+            (r) {
+              emit(state.copyWith(createCartridgeState: ModelState.loaded(r)));
+              emit(
+                state.copyWith(createCartridgeState: ModelState.idle()),
+              );
+            },
+          ),
+        );
+  }
+
+  Future deleteCartridge(int id) async {
+    emit(state.copyWith(deleteCartridgeState: ModelState.loading()));
+
+    await _repository.deleteCartridge(id).then(
           (result) => result.fold(
             (l) => emit(
               state.copyWith(
-                createCartridgeState: ModelState.failed(l.error),
+                deleteCartridgeState: ModelState.failed(l.error),
               ),
             ),
             (r) => emit(
               state.copyWith(
-                createCartridgeState: ModelState.loaded(r),
+                deleteCartridgeState: ModelState.loaded(r),
               ),
             ),
           ),
         );
   }
 
+  Future<void> loadCartridgeById(int id) async {
+    emit(state.copyWith(getCartridgesState: ModelState.loading()));
+
+    await _repository.getCartridgeById(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                getCartridgeByIdState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                getCartridgeByIdState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
+  // Future<void> loadCartridgeByColumn(String columnName, String columnValue) async {
+  //   emit(state.copyWith(getCartridgeByColumnState: ModelState.loading()));
+  //
+  //   await _repository.getCartridgeByColumn(columnName, columnValue).then(
+  //         (result) => result.fold(
+  //           (l) => emit(
+  //         state.copyWith(
+  //           getCartridgeByColumnState: ModelState.failed(l.error),
+  //         ),
+  //       ),
+  //           (r) => emit(
+  //         state.copyWith(
+  //           getCartridgeByColumnState: ModelState.loaded(r),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Future<void> editCartridge(
-      {required int id, String? mark, required String model, String? inventoryNumber}) async {
+      {required int id,
+      String? mark,
+      required String model,
+      String? inventoryNumber}) async {
     emit(state.copyWith(updateCartridgeState: ModelState.loading()));
 
     await _repository
         .updatePrinter(
-        id: id, mark: mark, model: model, inventoryNumber: inventoryNumber)
+            id: id, mark: mark, model: model, inventoryNumber: inventoryNumber)
         .then(
-          (result) => result.fold(
-            (l) => emit(
-          state.copyWith(
-            updateCartridgeState: ModelState.failed(l.error),
-          ),
-        ),
-            (r) => emit(
-          state.copyWith(
-            updateCartridgeState: ModelState.loaded(r),
-          ),
-        ),
-      ),
-    );
+          (result) => result.fold((l) {
+            emit(state.copyWith(
+                updateCartridgeState: ModelState.failed(l.error)));
+            emit(state.copyWith(createCartridgeState: ModelState.idle()));
+          }, (r) {
+            emit(state.copyWith(updateCartridgeState: ModelState.loaded(r)));
+            emit(state.copyWith(createCartridgeState: ModelState.idle()));
+          }),
+        );
   }
 }

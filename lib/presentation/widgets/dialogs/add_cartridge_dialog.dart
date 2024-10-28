@@ -83,9 +83,6 @@ class CartridgeDialogs {
                       inputFormatters: [
                         UpperCaseTextFormatter(),
                       ],
-                      onChanged: (value) {
-                        cartridgeCubit.changeModel(value);
-                      },
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 5),
@@ -113,9 +110,6 @@ class CartridgeDialogs {
                         UpperCaseTextFormatter(),
                         LengthLimitingTextInputFormatter(5),
                       ],
-                      onChanged: (value) {
-                        cartridgeCubit.changeInventoryNumber(value);
-                      },
                     ),
                   ],
                 ),
@@ -156,8 +150,6 @@ class CartridgeDialogs {
                           formKey.currentState!.reset();
                           Navigator.of(context).pop();
                         }
-                        state.copyWith(
-                            mark: null, model: null, inventoryNumber: null);
                       },
                       child: Text(cartridge == null ? 'Добавить' : 'Изменить'),
                     );

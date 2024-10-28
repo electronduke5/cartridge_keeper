@@ -8,9 +8,6 @@ class CartridgeState {
   final ModelState<Cartridge> createCartridgeState;
   final ModelState<Cartridge> updateCartridgeState;
   final ModelState<String>? deleteCartridgeState;
-  final String? mark;
-  final String model;
-  final String? inventoryNumber;
 
   const CartridgeState({
     this.getCartridgesState = const IdleState(),
@@ -19,9 +16,6 @@ class CartridgeState {
     this.createCartridgeState = const IdleState(),
     this.updateCartridgeState = const IdleState(),
     this.deleteCartridgeState = const IdleState(),
-    this.mark,
-    this.model = '',
-    this.inventoryNumber,
   });
 
   CartridgeState copyWith({
@@ -31,9 +25,6 @@ class CartridgeState {
     ModelState<Cartridge>? createCartridgeState,
     ModelState<Cartridge>? updateCartridgeState,
     ModelState<String>? deleteCartridgeState,
-    String? mark,
-    String? model,
-    String? inventoryNumber,
   }) =>
       CartridgeState(
         getCartridgesState: getCartridgesState ?? this.getCartridgesState,
@@ -42,8 +33,5 @@ class CartridgeState {
         createCartridgeState: createCartridgeState ?? this.createCartridgeState,
         updateCartridgeState: updateCartridgeState ?? this.updateCartridgeState,
         deleteCartridgeState: deleteCartridgeState ?? this.deleteCartridgeState,
-        mark: mark ?? this.mark,
-        model: model ?? this.model,
-        inventoryNumber: inventoryNumber ?? this.inventoryNumber,
       );
 }

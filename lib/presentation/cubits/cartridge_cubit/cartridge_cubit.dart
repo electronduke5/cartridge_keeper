@@ -12,18 +12,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
 
   final _repository = AppModule.getCartridgeRepository();
 
-  Future changeMark(String? mark) async {
-    emit(state.copyWith(mark: mark));
-  }
-
-  Future changeModel(String model) async {
-    emit(state.copyWith(model: model));
-  }
-
-  Future changeInventoryNumber(String? inventoryNumber) async {
-    emit(state.copyWith(inventoryNumber: inventoryNumber));
-  }
-
   Future<void> loadAllCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
@@ -56,15 +44,8 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         .then(
           (result) => result.fold(
             (l) {
-              emit(
-                state.copyWith(
-                  createCartridgeState: ModelState.failed(
-                    l.errorCode == 2067
-                        ? 'Картридж с таким инвентаризационным номером: ${state.inventoryNumber} уже есть!'
-                        : l.error,
-                  ),
-                ),
-              );
+              emit(state.copyWith(
+                  createCartridgeState: ModelState.failed(l.error)));
               emit(
                 state.copyWith(createCartridgeState: ModelState.idle()),
               );

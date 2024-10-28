@@ -4,11 +4,14 @@ import 'package:dartz/dartz.dart';
 import 'package:sqflite/sqflite.dart';
 
 mixin DatabaseService<T extends Object> {
-  Future<Either<Failure, List<T>>> getAll(
-      {required T Function(Map<String, dynamic>) fromMap,
-      required String table}) async {
+  Future<Either<Failure, List<T>>> getAll({
+    required T Function(Map<String, dynamic>) fromMap,
+    required String table,
+    String? searchingColumn,
+    String? searchingValue,
+  }) async {
     try {
-      final response = await DatabaseHelper.instance.queryAllRows(table);
+      final response = await DatabaseHelper.instance.queryAllRows(table, searchingColumn, searchingValue);
 
       //print('res!!!!!!:   $response');
       List<T> listT = response.map((element) => fromMap(element)).toList();

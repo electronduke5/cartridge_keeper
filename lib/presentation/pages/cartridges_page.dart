@@ -26,16 +26,31 @@ class CartridgesPage extends StatelessWidget {
             ),
           ),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Card(
               child: Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Row(
                   children: [
-                    Text('Фильтрация\nпо модели'),
-                    SizedBox(width: 20),
-                    Text('Поиск'),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      child: BlocBuilder<CartridgeCubit, CartridgeState>(
+                        builder: (context, state) => TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Инв. №',
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (value) {
+                            context
+                                .read<CartridgeCubit>()
+                                .searchCartridge(value);
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    const Text('Фильтрация\nпо модели'),
                   ],
                 ),
               ),

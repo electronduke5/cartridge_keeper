@@ -7,7 +7,9 @@ abstract class CartridgeRepository {
   Future<Either<Failure, List<Cartridge>>> getAllCartridges();
 
   Future<Either<Failure, Cartridge?>> getCartridgeById(int id);
+
   // Future<Either<Failure, Cartridge?>> getCartridgeByColumn(String column, dynamic columnValue);
+  Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue);
 
   Future<Either<Failure, Cartridge>> createCartridge({
     String? mark,

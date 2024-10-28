@@ -78,6 +78,23 @@ class CartridgeRepositoryImpl
     );
   }
 
+  @override
+  Future<Either<Failure, List<Cartridge>>> searchCartridges(
+      String searchValue) async {
+    final cartridges = await getAll(
+      searchingColumn: 'inventory_number',
+      searchingValue: searchValue,
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+    );
+    print(
+        'searchCartridges: ${cartridges.fold((l) => l, (r) => r.map((element) => element.toMap()))}');
+    return cartridges.fold(
+      (l) => Left(l),
+      (r) => Right(r),
+    );
+  }
+
 // @override
 // Future<Either<Failure, Cartridge?>> getCartridgeByColumn( String columnName, dynamic columnValue) async {
 //   return await getObjectByColumn(

@@ -60,6 +60,25 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
+  Future<void> searchCartridge(String inventoryNumber) async {
+    emit(state.copyWith(getCartridgesState: ModelState.loading()));
+
+    await _repository.searchCartridges(inventoryNumber).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                getCartridgesState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                getCartridgesState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
   Future deleteCartridge(int id) async {
     emit(state.copyWith(deleteCartridgeState: ModelState.loading()));
 

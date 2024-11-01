@@ -7,20 +7,30 @@ mixin DatabaseService<T extends Object> {
   Future<Either<Failure, List<T>>> getAll({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,
-    String? searchingColumn,
-    String? searchingValue,
   }) async {
     try {
-      final response = await DatabaseHelper.instance.queryAllRows(table, searchingColumn, searchingValue);
-
-      //print('res!!!!!!:   $response');
+      final response = await DatabaseHelper.instance.queryAllRows(table);
       List<T> listT = response.map((element) => fromMap(element)).toList();
-
       return Right(listT);
     } on DatabaseException catch (error) {
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
   }
+
+  Future<Either<Failure,List<T>>> search({
+    required T Function(Map<String, dynamic>) fromMap,
+    required String table,
+    required String searchingColumn,
+    required String searchingValue,
+}) async {
+    try {
+      final response = await DatabaseHelper.instance.searchQuery(table, searchingColumn, searchingValue);
+      List<T> listT = response.map((element) => fromMap(element)).toList();
+      return Right(listT);
+    } on DatabaseException catch (error) {
+      return Left(Failure(error, error.toString(), error.getResultCode()));
+    }
+}
 
   Future<Either<Failure, T>> getObjectById({
     required T Function(Map<String, dynamic>) fromMap,

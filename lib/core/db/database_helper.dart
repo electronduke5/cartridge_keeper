@@ -48,14 +48,14 @@ class DatabaseHelper {
     return await queryById(createdId, table);
   }
 
-  Future<List<Map<String, dynamic>>> queryAllRows(
-      String table, String? searchingColumn, String? searchingValue) async {
+  Future<List<Map<String, dynamic>>> queryAllRows(String table) async {
     Database db = await instance.database;
-    if (searchingColumn == null && searchingValue == null ||
-        searchingValue == '' ||
-        searchingColumn == '') {
-      return await db.query(table);
-    }
+    return await db.query(table);
+  }
+
+  Future<List<Map<String, dynamic>>> searchQuery(
+      String table, String searchingColumn, String searchingValue) async {
+    Database db = await instance.database;
     return await db.query(table,
         where: '$searchingColumn LIKE \'%$searchingValue%\'');
   }

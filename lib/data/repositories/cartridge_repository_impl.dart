@@ -81,7 +81,7 @@ class CartridgeRepositoryImpl
   @override
   Future<Either<Failure, List<Cartridge>>> searchCartridges(
       String searchValue) async {
-    final cartridges = await getAll(
+    final cartridges = await search(
       searchingColumn: 'inventory_number',
       searchingValue: searchValue,
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),

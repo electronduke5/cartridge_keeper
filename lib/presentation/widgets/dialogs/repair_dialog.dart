@@ -53,8 +53,10 @@ class RepairDialogs {
                       ),
                       BlocBuilder<CartridgeCubit, CartridgeState>(
                         builder: (context, state) {
+                          //TODO: Проверка, если availableCarteidge == null, то показать, что картриджей нет
                           if (state.getCartridgesState.item == null ||
-                              state.getCartridgesState.item!.isEmpty) {
+                              state.getCartridgesState.item!.isEmpty || repairCubit.state.getRepairsState.item == null
+                          ) {
                             return const Center(
                                 child: Text('Сначала добавьте картридж'));
                           } else {
@@ -66,7 +68,7 @@ class RepairDialogs {
                                 return null;
                               },
                               value: repair?.cartridge,
-                              items: state.getCartridgesState.item!
+                              items: repairCubit.getAvailableCartridges(state.getCartridgesState.item!, repairCubit.state.getRepairsState.item!)
                                   .map((e) => DropdownMenuItem(
                                         value: e,
                                         child: Text(

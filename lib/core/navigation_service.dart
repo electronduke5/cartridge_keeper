@@ -1,4 +1,6 @@
 import 'package:cartridge_keeper/presentation/cubits/printer_cubit/printer_cubit.dart';
+import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.dart';
+import 'package:cartridge_keeper/presentation/pages/repairs_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,6 +40,21 @@ class NavigationService {
                   create: (_) => CartridgeCubit()..loadAllCartridges()),
             ],
             child: const CartridgesPage(),
+          ),
+        );
+      case '/repairs':
+        return _getPageRoute(
+          routeName: settings.name!,
+          viewToShow: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => CartridgeCubit(),
+              ),
+              BlocProvider(
+                create: (_) => RepairCubit()..loadAllRepairs(),
+              ),
+            ],
+            child: const RepairsPage(),
           ),
         );
       default:

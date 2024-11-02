@@ -14,10 +14,13 @@ class Cartridge extends CartridgeEntity {
         'inventory_number': inventoryNumber,
       };
 
-  factory Cartridge.fromMap(Map<String, dynamic> json) => Cartridge(
-        id: json['id'] as int,
-        mark: json['mark'],
-        model: json['model'],
-        inventoryNumber: json['inventory_number'],
-      );
+  factory Cartridge.fromMap(Map<String, dynamic> json) {
+    print('cartridge JSON = $json');
+    return Cartridge(
+      id: json['id'] as int,
+      mark: json['mark'],
+      model: json['model'],
+      inventoryNumber: json['inventory_number'],
+    );
+  }
 }

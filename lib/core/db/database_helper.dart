@@ -35,6 +35,7 @@ class DatabaseHelper {
       _pathDB!,
       options: OpenDatabaseOptions(
         version: _version,
+        onConfigure: _onConfigure,
         onCreate: (db, version) => onCreateTable(db),
         onUpgrade: (db, oldVersion, newVersion) => onUpdateTable(db),
       ),
@@ -51,6 +52,18 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> queryAllRows(String table) async {
     Database db = await instance.database;
     return await db.query(table);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllRowsWithReference(String table,
+      String referenceTable, String referenceColumn) async {
+    Database db = await instance.database;
+    return await db.rawQuery(
+      DatabaseSelectRequests.selectAllWithReference(
+        table,
+        referenceTable,
+        referenceColumn,
+      ),
+    );
   }
 
   Future<List<Map<String, dynamic>>> searchQuery(
@@ -100,6 +113,10 @@ class DatabaseHelper {
     } on DatabaseException catch (error) {
       print(error.result);
     }
+  }
+
+  static Future _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   Future<void> onUpdateTable(Database db) async {

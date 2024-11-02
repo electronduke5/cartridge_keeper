@@ -17,6 +17,23 @@ mixin DatabaseService<T extends Object> {
     }
   }
 
+  Future<Either<Failure, List<T>>> getAllWithReference({
+    required T Function(Map<String, dynamic>) fromMap,
+    required String table,
+    required String referenceTable,
+    required String referenceColumn,
+  }) async {
+    try {
+      final response = await DatabaseHelper.instance.queryAllRowsWithReference(table, referenceTable, referenceColumn);
+      List<T> listT = response.map((element) => fromMap(element)).toList();
+      return Right(listT);
+    } on DatabaseException catch (error) {
+      return Left(Failure(error, error.toString(), error.getResultCode()));
+    }
+  }
+
+
+
   Future<Either<Failure,List<T>>> search({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,

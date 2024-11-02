@@ -5,28 +5,34 @@ import 'package:dartz/dartz.dart';
 
 import '../../common/failure.dart';
 import '../../domain/repositories/repair_repository.dart';
+import '../models/cartridge.dart';
 
 class RepairRepositoryImpl
     with DatabaseService<Repair>
     implements RepairRepository {
   @override
   Future<Either<Failure, Repair>> createRepair(
-      {required DateTime startDate, required int cartridgeId}) async {
+      {required String startDate, required Cartridge cartridge}) async {
     return await createObject(
       fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
       table: DatabaseRequest.tableRepairs,
-      data: Repair(startDate: startDate, cartridgeId: cartridgeId).toMap(),
+      data: Repair(startDate: startDate, cartridge: cartridge).toMap(),
     ).then(
-      (result) => result.fold(
-        (l) => Left(l),
-        (r) => Right(r),
-      ),
+      (result) {
+        //TODO: Тут проверить что возвращается, почему то 0
+        return result.fold(
+          (l) => Left(l),
+          (r) => Right(r),
+        );
+      },
     );
   }
 
   @override
   Future<Either<Failure, List<Repair>>> getAllRepairs() async {
-    return await getAll(
+    return await getAllWithReference(
+      referenceTable: DatabaseRequest.tableCartridges,
+      referenceColumn: 'cartridge_id',
       fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
       table: DatabaseRequest.tableRepairs,
     );
@@ -35,15 +41,14 @@ class RepairRepositoryImpl
   @override
   Future<Either<Failure, Repair>> updateRepair(
       {required int id,
-      required DateTime startDate,
-      DateTime? endDate,
-      required int cartridgeId}) async {
+      required String startDate,
+      String? endDate,
+      required Cartridge cartridge}) async {
     return await updateObject(
       id: id,
       fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
       table: DatabaseRequest.tableRepairs,
-      data: Repair(
-              startDate: startDate, cartridgeId: cartridgeId, endDate: endDate)
+      data: Repair(startDate: startDate, cartridge: cartridge, endDate: endDate)
           .toMap(),
     ).then(
       (result) => result.fold(
@@ -51,5 +56,12 @@ class RepairRepositoryImpl
         (r) => Right(r),
       ),
     );
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteRepair(int id) async {
+    final resultDelete =
+        await deleteObject(table: DatabaseRequest.tableRepairs, id: id);
+    return resultDelete.fold((l) => Left(l), (r) => Right(r));
   }
 }

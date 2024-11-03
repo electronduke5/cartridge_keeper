@@ -57,8 +57,67 @@ class RepairsPage extends StatelessWidget {
                                   (a, b) => a.startDate.parseLocalDate
                                       .compareTo(b.startDate.parseLocalDate),
                                 );
+
                                 final repair = listRepairs[index];
-                                return RepairCardWidget(repair: repair);
+                                final previousRepair =
+                                    index > 0 ? listRepairs[index - 1] : null;
+                                final isNewDate = previousRepair == null ||
+                                    repair.startDate.parseLocalDate !=
+                                        previousRepair.startDate.parseLocalDate;
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (isNewDate)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                height: 1,
+                                                color: listRepairs
+                                                        .where((r) =>
+                                                            r.startDate ==
+                                                            repair.startDate)
+                                                        .every((r) =>
+                                                            r.endDate != null)
+                                                    ? Colors.lightGreenAccent
+                                                    : Colors.grey,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Text(
+                                                '${repair.startDate} (${listRepairs.where((r) => r.startDate == repair.startDate).length} шт.)',
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                height: 1,
+                                                color: listRepairs
+                                                        .where((r) =>
+                                                            r.startDate ==
+                                                            repair.startDate)
+                                                        .every((r) =>
+                                                            r.endDate != null)
+                                                    ? Colors.lightGreenAccent
+                                                    : Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    RepairCardWidget(repair: repair),
+                                  ],
+                                );
                               },
                             );
                           }

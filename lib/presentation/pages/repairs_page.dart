@@ -149,6 +149,20 @@ class RepairsPage extends StatelessWidget {
                   icon: const Icon(Icons.add),
                   label: const Text('Добавить'),
                 ),
+                const SizedBox(width: 10),
+                BlocBuilder<RepairCubit, RepairState>(
+                  builder: (context, state) {
+                    return ElevatedButton.icon(
+                      onPressed: () async {
+                        await context
+                            .read<RepairCubit>()
+                            .creatingPDF(state.getRepairsState.item!);
+                      },
+                      icon: const Icon(Icons.print_outlined),
+                      label: const Text('PDF'),
+                    );
+                  },
+                ),
               ],
             )
           ],

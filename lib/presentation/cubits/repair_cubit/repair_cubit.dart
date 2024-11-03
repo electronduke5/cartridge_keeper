@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:cartridge_keeper/presentation/pages/repairs_pdf_page.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/cartridge.dart';
@@ -5,12 +9,31 @@ import '../../../data/models/repair.dart';
 import '../../di/app_module.dart';
 import '../model_state.dart';
 
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
+import 'package:pdf/widgets.dart' as pw;
+
 part 'repair_state.dart';
 
 class RepairCubit extends Cubit<RepairState> {
   RepairCubit() : super(const RepairState());
 
   final _repository = AppModule.getRepairRepository();
+
+  Future<void> creatingPDF(List<Repair> list) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(await RepairsPdf.repairsPage(list));
+    String? outputFile = await FilePicker.platform.saveFile(
+      dialogTitle: 'Выберите папку для сохранения',
+      fileName: 'Отчёт ${DateTime.now().toLocalFormat}.pdf',
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    try {
+      File file = File(outputFile!);
+      await file.writeAsBytes(await pdf.save());
+    } catch (e) {}
+  }
 
   Future<void> changedCartridge(Cartridge? cartridge) async {
     emit(state.copyWith(changedCartridge: cartridge));

@@ -4,6 +4,9 @@ import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubits/cartridge_cubit/cartridge_cubit.dart';
+import 'dialogs/repair_dialog.dart';
+
 
 class RepairCardWidget extends StatelessWidget {
   const RepairCardWidget({super.key, required this.repair});
@@ -65,7 +68,22 @@ class RepairCardWidget extends StatelessWidget {
                           ),
                         );
                       }
-                      return const SizedBox();
+                      return IconButton(
+                        onPressed: () async {
+                          RepairDialogs.openDialog(
+                            repair: repair,
+                            context: context,
+                            repairCubit: context.read<RepairCubit>(),
+                            cartridgeCubit: context.read<CartridgeCubit>()
+                              ..loadAllCartridges(),
+                            cartridge: repair.cartridge,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.edit_note,
+                          color: Colors.orangeAccent,
+                        ),
+                      );
                     }(),
                     IconButton(
                       onPressed: () async {

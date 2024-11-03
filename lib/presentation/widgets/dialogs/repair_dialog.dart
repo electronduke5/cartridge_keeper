@@ -6,6 +6,7 @@ import '../../../data/models/cartridge.dart';
 import '../../../data/models/repair.dart';
 import '../../cubits/cartridge_cubit/cartridge_cubit.dart';
 import '../../cubits/repair_cubit/repair_cubit.dart';
+import '../end_date_form_field.dart';
 import '../start_date_form_field.dart';
 
 class RepairDialogs {
@@ -14,6 +15,7 @@ class RepairDialogs {
   static openDialog({
     required BuildContext context,
     Repair? repair,
+    Cartridge? cartridge,
     required RepairCubit repairCubit,
     required CartridgeCubit cartridgeCubit,
   }) {
@@ -50,67 +52,116 @@ class RepairDialogs {
                         padding: EdgeInsets.only(top: 10, bottom: 5),
                         child: Text('Картридж'),
                       ),
-                      BlocBuilder<CartridgeCubit, CartridgeState>(
-                        builder: (context, state) {
-                          //TODO: Проверка, если availableCarteidge == null, то показать, что картриджей нет
-                          if (state.getCartridgesState.item == null ||
-                              state.getCartridgesState.item!.isEmpty ||
-                              repairCubit.state.getRepairsState.item == null) {
-                            return const Center(
-                                child: Text('Сначала добавьте картридж'));
-                          } else {
-                            return DropdownButtonFormField<Cartridge?>(
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Выберите картридж';
-                                }
-                                return null;
-                              },
-                              value: repair?.cartridge,
-                              items: repairCubit
-                                  .getAvailableCartridges(
-                                      state.getCartridgesState.item!,
-                                      repairCubit.state.getRepairsState.item!)
-                                  .map((e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                            'Инв. №: ${e.inventoryNumber}\n${e.model}'),
-                                      ))
-                                  .toList(),
-                              onChanged: (Cartridge? cartridge) {
-                                repairCubit.changedCartridge(cartridge);
-                              },
-                            );
-                          }
-                        },
-                      ),
+                      () {
+                        if (cartridge == null) {
+                          return BlocBuilder<CartridgeCubit, CartridgeState>(
+                            builder: (context, state) {
+                              //TODO: Проверка, если availableCarteidge == null, то показать, что картриджей нет
+                              if (state.getCartridgesState.item == null ||
+                                  state.getCartridgesState.item!.isEmpty ||
+                                  repairCubit.state.getRepairsState.item ==
+                                      null) {
+                                return const Center(
+                                    child: Text('Сначала добавьте картридж'));
+                              } else {
+                                return DropdownButtonFormField<Cartridge?>(
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Выберите картридж';
+                                    }
+                                    return null;
+                                  },
+                                  value: repair?.cartridge,
+                                  items: repairCubit
+                                      .getAvailableCartridges(
+                                          state.getCartridgesState.item!,
+                                          repairCubit
+                                              .state.getRepairsState.item!)
+                                      .map((e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(
+                                                'Инв. №: ${e.inventoryNumber}\n${e.model}'),
+                                          ))
+                                      .toList(),
+                                  onChanged: (Cartridge? cartridge) {
+                                    repairCubit.changedCartridge(cartridge);
+                                  },
+                                );
+                              }
+                            },
+                          );
+                        } else {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(
+                                style: BorderStyle.solid,
+                                color: const Color(0xFF4880FF).withOpacity(0.6),
+                                width: 2.0,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    children: [
+                                      const Text('Модель:'),
+                                      Text(
+                                        cartridge.model.toString(),
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 20),
+                                  Column(
+                                    children: [
+                                      const Text('Инв. номер:'),
+                                      Text(
+                                        cartridge.inventoryNumber.toString(),
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      }(),
                       const Padding(
                         padding: EdgeInsets.only(top: 10, bottom: 5),
                         child: Text('Дата начала ремонта'),
                       ),
                       StartDateFormField(
                         startDateController: startDateController,
+                        endDate: repair?.endDate?.parseLocalDate,
                       ),
                       () {
                         if (repair != null) {
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(top: 10, bottom: 5),
                                 child: Text('Дата окончания ремонта'),
                               ),
-                              TextFormField(
-                                controller: endDateController,
-                                readOnly: true,
-                                onTap: () async {
-                                  final date = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2100),
-                                  );
-                                  print('endDate: $date');
+                              EndDateFormField(
+                                validator: (value) {
+                                  if (value != null &&
+                                      value.isNotEmpty &&
+                                      value.parseLocalDate.isBefore(
+                                          startDateController
+                                              .text.parseLocalDate)) {
+                                    return 'Дата окончания ремонта не может быть раньше даты начала';
+                                  }
+                                  return null;
                                 },
+                                endDateController: endDateController,
+                                startDate:
+                                    startDateController.text.parseLocalDate,
                               ),
                             ],
                           );
@@ -133,12 +184,22 @@ class RepairDialogs {
                       return ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            if (repair == null) {
+                            if (repair == null || cartridge == null) {
                               repairCubit
                                 ..addRepair(startDateController.text,
                                     state.changedCartridge!)
                                 ..loadAllRepairs();
-                            } else {}
+                            } else {
+                              repairCubit
+                                ..editRepair(
+                                    repair.id,
+                                    startDateController.text,
+                                    endDateController.text.isEmpty
+                                        ? null
+                                        : endDateController.text,
+                                    cartridge)
+                                ..loadAllRepairs();
+                            }
                             formKey.currentState!.reset();
                             Navigator.of(context).pop();
                           }

@@ -53,8 +53,8 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
-  Future<List<Map<String, dynamic>>> queryAllRowsWithReference(String table,
-      String referenceTable, String referenceColumn) async {
+  Future<List<Map<String, dynamic>>> queryAllRowsWithReference(
+      String table, String referenceTable, String referenceColumn) async {
     Database db = await instance.database;
     return await db.rawQuery(
       DatabaseSelectRequests.selectAllWithReference(
@@ -63,6 +63,22 @@ class DatabaseHelper {
         referenceColumn,
       ),
     );
+  }
+
+  Future<Map<String, dynamic>> queryByIdWithReference({
+    required int id,
+    required String table,
+    required String referenceTable,
+    required String referenceColumn,
+  }) async {
+    Database db = await instance.database;
+    final result = await db.rawQuery(DatabaseSelectRequests.selectWithReference(
+      table,
+      referenceTable,
+      referenceColumn,
+      id,
+    ));
+    return result.first;
   }
 
   Future<List<Map<String, dynamic>>> searchQuery(

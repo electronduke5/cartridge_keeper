@@ -20,4 +20,9 @@ abstract class RepairRepository {
     String? endDate,
     required Cartridge cartridge,
   });
+
+  Future<Either<Failure, Repair>> finishRepair({
+    required int id,
+    required String endDate,
+  });
 }

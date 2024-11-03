@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/cartridge.dart';
@@ -62,6 +60,7 @@ class RepairCubit extends Cubit<RepairState> {
         allRepairs.map((repair) => repair.cartridge.id).toSet();
     return allCartridges
         .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
+        .where((cartridge) => cartridge.inventoryNumber != null)
         .toList();
   }
 
@@ -96,6 +95,25 @@ class RepairCubit extends Cubit<RepairState> {
             endDate: endDate,
             cartridge: cartridge)
         .then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateRepairState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateRepairState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
+  Future<void> returnFromRepair(int id, String endDate) async {
+    emit(state.copyWith(updateRepairState: ModelState.loading()));
+
+    await _repository.finishRepair(id: id, endDate: endDate).then(
           (result) => result.fold(
             (l) => emit(
               state.copyWith(

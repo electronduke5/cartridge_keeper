@@ -59,6 +59,23 @@ class RepairRepositoryImpl
   }
 
   @override
+  Future<Either<Failure, Repair>> finishRepair({
+    required int id,
+    required String endDate,
+  }) async {
+    final repair = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
+      id: id,
+      table: DatabaseRequest.tableRepairs,
+      data: {'end_date': endDate},
+    );
+    return repair.fold(
+      (l) => Left(l),
+      (r) => Right(r),
+    );
+  }
+
+  @override
   Future<Either<Failure, String>> deleteRepair(int id) async {
     final resultDelete =
         await deleteObject(table: DatabaseRequest.tableRepairs, id: id);

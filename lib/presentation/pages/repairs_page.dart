@@ -1,3 +1,4 @@
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/data/models/repair.dart';
 import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
 import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.dart';
@@ -50,8 +51,13 @@ class RepairsPage extends StatelessWidget {
                             return ListView.builder(
                               itemCount: state.getRepairsState.item!.length,
                               itemBuilder: (context, index) {
-                                final repair =
-                                    state.getRepairsState.item![index];
+                                final List<Repair> listRepairs =
+                                    state.getRepairsState.item!;
+                                listRepairs.sort(
+                                  (a, b) => a.startDate.parseLocalDate
+                                      .compareTo(b.startDate.parseLocalDate),
+                                );
+                                final repair = listRepairs[index];
                                 return RepairCardWidget(repair: repair);
                               },
                             );

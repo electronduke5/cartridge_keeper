@@ -1,10 +1,9 @@
-import 'package:cartridge_keeper/common/database_create_request.dart';
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/data/models/repair.dart';
 import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../core/db/database_helper.dart';
 
 class RepairCardWidget extends StatelessWidget {
   const RepairCardWidget({super.key, required this.repair});
@@ -51,23 +50,28 @@ class RepairCardWidget extends StatelessWidget {
               builder: (context, state) {
                 return Row(
                   children: [
-                    IconButton(
-                      onPressed: () async {
-                        final response = await DatabaseHelper.instance.queryAllRowsWithReference(
-                          DatabaseRequest.tableRepairs,
-                          DatabaseRequest.tableCartridges,
-                          'cartridge_id',
+                    () {
+                      if (repair.endDate == null) {
+                        return IconButton(
+                          onPressed: () async {
+                            context.read<RepairCubit>()
+                              ..returnFromRepair(
+                                  repair.id, DateTime.now().toLocalFormat)
+                              ..loadAllRepairs();
+                          },
+                          icon: const Icon(
+                            Icons.task_alt,
+                            color: Colors.green,
+                          ),
                         );
-                        print(response);
-                      },
-                      icon: const Icon(
-                        Icons.task_alt,
-                        color: Colors.green,
-                      ),
-                    ),
+                      }
+                      return const SizedBox();
+                    }(),
                     IconButton(
                       onPressed: () async {
-                        context.read<RepairCubit>()..deleteRepair(repair.id)..loadAllRepairs();
+                        context.read<RepairCubit>()
+                          ..deleteRepair(repair.id)
+                          ..loadAllRepairs();
                       },
                       icon: const Icon(
                         Icons.delete_outline,

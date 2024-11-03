@@ -1,6 +1,5 @@
 part of 'cartridge_cubit.dart';
 
-@immutable
 class CartridgeState {
   final ModelState<List<Cartridge>> getCartridgesState;
   final ModelState<Cartridge> getCartridgeByIdState;

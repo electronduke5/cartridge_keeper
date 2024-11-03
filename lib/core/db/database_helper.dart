@@ -6,7 +6,6 @@ import 'package:cartridge_keeper/data/models/printer.dart';
 import 'package:cartridge_keeper/domain/entity/department.dart';
 import 'package:cartridge_keeper/domain/entity/printer.dart';
 
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;

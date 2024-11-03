@@ -1,6 +1,5 @@
 part of 'office_cubit.dart';
 
-@immutable
 class OfficeState {
   final ModelState<List<Office>> getOfficesState;
   final ModelState<Office> createOfficeState;

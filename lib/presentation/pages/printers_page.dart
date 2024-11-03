@@ -34,7 +34,7 @@ class PrintersPage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Divider(),
+                          const Divider(),
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.0),
                             child: Card(

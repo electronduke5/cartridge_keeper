@@ -1,6 +1,5 @@
 part of 'printer_cubit.dart';
 
-@immutable
 class PrinterState {
   final ModelState<List<Printer>> getPrintersState;
   final ModelState<Printer> createPrinterState;

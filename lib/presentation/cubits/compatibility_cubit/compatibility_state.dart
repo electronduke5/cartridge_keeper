@@ -1,6 +1,5 @@
 part of 'compatibility_cubit.dart';
 
-@immutable
 class CompatibilityState {
   final ModelState<List<Compatibility>> getCompatibilitiesState;
   final ModelState<Compatibility> createCompatibilityState;

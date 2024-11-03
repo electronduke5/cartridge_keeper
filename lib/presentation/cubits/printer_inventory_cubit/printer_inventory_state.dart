@@ -1,6 +1,5 @@
 part of 'printer_inventory_cubit.dart';
 
-@immutable
 class PrinterInventoryState {
   final ModelState<List<PrinterInventory>> getPrinterInventoryState;
   final ModelState<PrinterInventory> createPrinterInventoryState;

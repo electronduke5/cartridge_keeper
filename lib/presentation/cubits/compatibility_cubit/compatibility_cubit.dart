@@ -1,7 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:cartridge_keeper/data/models/compatibility.dart';
 import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../di/app_module.dart';
 

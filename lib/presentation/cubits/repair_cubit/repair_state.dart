@@ -1,6 +1,5 @@
 part of 'repair_cubit.dart';
 
-@immutable
 class RepairState {
   final ModelState<List<Repair>> getRepairsState;
   final ModelState<Repair> createRepairState;

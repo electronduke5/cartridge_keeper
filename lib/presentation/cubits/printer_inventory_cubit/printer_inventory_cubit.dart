@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/printer_inventory.dart';
 import '../../di/app_module.dart';

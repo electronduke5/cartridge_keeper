@@ -1,6 +1,5 @@
 import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/cartridge.dart';
@@ -55,8 +54,8 @@ class RepairDialogs {
                         builder: (context, state) {
                           //TODO: Проверка, если availableCarteidge == null, то показать, что картриджей нет
                           if (state.getCartridgesState.item == null ||
-                              state.getCartridgesState.item!.isEmpty || repairCubit.state.getRepairsState.item == null
-                          ) {
+                              state.getCartridgesState.item!.isEmpty ||
+                              repairCubit.state.getRepairsState.item == null) {
                             return const Center(
                                 child: Text('Сначала добавьте картридж'));
                           } else {
@@ -68,7 +67,10 @@ class RepairDialogs {
                                 return null;
                               },
                               value: repair?.cartridge,
-                              items: repairCubit.getAvailableCartridges(state.getCartridgesState.item!, repairCubit.state.getRepairsState.item!)
+                              items: repairCubit
+                                  .getAvailableCartridges(
+                                      state.getCartridgesState.item!,
+                                      repairCubit.state.getRepairsState.item!)
                                   .map((e) => DropdownMenuItem(
                                         value: e,
                                         child: Text(
@@ -132,12 +134,10 @@ class RepairDialogs {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             if (repair == null) {
-                              print(
-                                  'startDateController.text: ${startDateController.text}');
-                              print(
-                                  'state.changedCartridgeId: ${state.changedCartridge?.model}');
-                              repairCubit..addRepair(startDateController.text, state.changedCartridge!)..loadAllRepairs();
-
+                              repairCubit
+                                ..addRepair(startDateController.text,
+                                    state.changedCartridge!)
+                                ..loadAllRepairs();
                             } else {}
                             formKey.currentState!.reset();
                             Navigator.of(context).pop();

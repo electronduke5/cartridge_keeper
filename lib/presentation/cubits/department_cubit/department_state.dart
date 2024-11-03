@@ -1,6 +1,5 @@
 part of 'department_cubit.dart';
 
-@immutable
 class DepartmentState {
   final ModelState<List<Department>> getDepartmentsState;
 

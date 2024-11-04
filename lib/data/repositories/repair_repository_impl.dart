@@ -31,8 +31,8 @@ class RepairRepositoryImpl
   @override
   Future<Either<Failure, List<Repair>>> getAllRepairs() async {
     return await getAllWithReference(
-      referenceTable: DatabaseRequest.tableCartridges,
-      referenceColumn: 'cartridge_id',
+      referenceTables: [DatabaseRequest.tableCartridges],
+      referenceColumns: ['cartridge_id'],
       fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
       table: DatabaseRequest.tableRepairs,
     );

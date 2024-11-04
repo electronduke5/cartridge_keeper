@@ -1,4 +1,3 @@
-
 import 'package:cartridge_keeper/data/models/cartridge.dart';
 import 'package:cartridge_keeper/presentation/di/app_module.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +10,7 @@ class CartridgeCubit extends Cubit<CartridgeState> {
   CartridgeCubit() : super(const CartridgeState());
 
   final _repository = AppModule.getCartridgeRepository();
+  final _repairRepository = AppModule.getRepairRepository();
 
   Future<void> loadAllCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
@@ -26,6 +26,45 @@ class CartridgeCubit extends Cubit<CartridgeState> {
             ),
           ),
         );
+  }
+
+  Future<void> loadOnlyAvailableCartridges() async {
+    emit(state.copyWith(getCartridgesState: ModelState.loading()));
+
+    final allCartridges = await _repository.getAllCartridges().then(
+          (result) => result.fold(
+            (l) => null,
+            (r) => r,
+          ),
+        );
+
+    if (allCartridges != null) {
+      final allRepairs = await _repairRepository.getAllRepairs().then(
+            (result) => result.fold(
+              (l) => null,
+              (r) => r,
+            ),
+          );
+      if (allRepairs != null) {
+        final repairCartridgeIds = allRepairs
+            .where((repair) => repair.endDate == null)
+            .map((repair) => repair.cartridge.id)
+            .toSet();
+
+        final availableCartridges = allCartridges
+            .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
+            .where((cartridge) => cartridge.inventoryNumber != null)
+            .toList();
+        emit(state.copyWith(
+            getCartridgesState: ModelState.loaded(availableCartridges)));
+      } else {
+        emit(state.copyWith(
+            getCartridgesState: ModelState.loaded(allCartridges)));
+      }
+    } else {
+      emit(state.copyWith(
+          getCartridgesState: ModelState.failed('Картриджей нет!')));
+    }
   }
 
   Future<void> addCartridge(

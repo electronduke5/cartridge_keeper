@@ -53,14 +53,17 @@ class DatabaseHelper {
     return await db.query(table);
   }
 
-  Future<List<Map<String, dynamic>>> queryAllRowsWithReference(
-      String table, String referenceTable, String referenceColumn) async {
+  Future<List<Map<String, dynamic>>> queryAllRowsWithReference({
+    required String table,
+    required List<String> referenceTables,
+    required List<String> referenceColumns,
+  }) async {
     Database db = await instance.database;
     return await db.rawQuery(
       DatabaseSelectRequests.selectAllWithReference(
         table,
-        referenceTable,
-        referenceColumn,
+        referenceTables,
+        referenceColumns,
       ),
     );
   }
@@ -97,7 +100,8 @@ class DatabaseHelper {
 
   Future<int> delete(int id, String table) async {
     Database db = await instance.database;
-    return await db.delete(table, where: 'id = ?', whereArgs: [id]);
+    int resDelete = await db.delete(table, where: 'id = ?', whereArgs: [id]);
+    return resDelete;
   }
 
   Future<Map<String, dynamic>> queryById(int id, String table) async {

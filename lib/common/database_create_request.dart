@@ -76,10 +76,11 @@ abstract class DatabaseRequest {
   static const String _createTableOffices = 'CREATE TABLE $tableOffices ('
       'id integer not NULL primary key,'
       'office_number text ,'
+      'replacement_date text not NULL,'
       'department_id integer not NULL,'
-      'printer_id integer not NULL,'
+      'cartridge_id integer not NULL,'
       'foreign key (department_id) REFERENCES $tableDepartments(id),'
-      'foreign key (printer_id) REFERENCES $tablePrinterInventory(id));';
+      'foreign key (cartridge_id) REFERENCES $tableCartridges(id));';
 
   /// Строка для удаления таблицы
   static String deleteTable(String table) => 'DROP TABLE $table';

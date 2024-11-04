@@ -1,6 +1,9 @@
+import 'package:cartridge_keeper/presentation/cubits/department_cubit/department_cubit.dart';
+import 'package:cartridge_keeper/presentation/cubits/office_cubit/office_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/printer_cubit/printer_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.dart';
 import 'package:cartridge_keeper/presentation/pages/repairs_page.dart';
+import 'package:cartridge_keeper/presentation/pages/replacing_cartridges_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,6 +58,24 @@ class NavigationService {
               ),
             ],
             child: const RepairsPage(),
+          ),
+        );
+      case '/replacing-cartridges':
+        return _getPageRoute(
+          routeName: settings.name!,
+          viewToShow: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => CartridgeCubit(),
+              ),
+              BlocProvider(
+                create: (_) => DepartmentCubit(),
+              ),
+              BlocProvider(
+                create: (_) => OfficeCubit()..loadAllOffices(),
+              ),
+            ],
+            child: const ReplacingCartridgesPage(),
           ),
         );
       default:

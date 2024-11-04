@@ -55,6 +55,7 @@ class _EndDateFormFieldState extends State<EndDateFormField> {
                 firstDate: widget.startDate,
                 lastDate: DateTime.now(),
               );
+              widget.endDateController.text = date!.toLocalFormat;
             },
           ),
         ),

@@ -80,7 +80,7 @@ class RepairCubit extends Cubit<RepairState> {
   List<Cartridge> getAvailableCartridges(
       List<Cartridge> allCartridges, List<Repair> allRepairs) {
     final repairCartridgeIds =
-        allRepairs.map((repair) => repair.cartridge.id).toSet();
+        allRepairs.where((repair) => repair.endDate == null).map((repair) => repair.cartridge.id).toSet();
     return allCartridges
         .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
         .where((cartridge) => cartridge.inventoryNumber != null)

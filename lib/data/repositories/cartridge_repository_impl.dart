@@ -20,18 +20,22 @@ class CartridgeRepositoryImpl
         model: model,
         inventoryNumber: inventoryNumber,
         isInRepair: false,
+        isInDeleted: false,
       ).toMap(),
     );
     return createdCartridge.fold((l) => Left(l), (r) => Right(r));
   }
 
   @override
-  Future<Either<Failure, String>> deleteCartridge(int id) async {
-    final resultDelete = await deleteObject(
+  Future<Either<Failure, Cartridge>> deleteCartridge(int id) async {
+    final resultSoftDelete = await updateObject(
       id: id,
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
+      data: {'is_deleted': 1},
     );
-    return resultDelete.fold((l) => Left(l), (r) => Right(r));
+
+    return resultSoftDelete.fold((l) => Left(l), (r) => Right(r));
   }
 
   @override
@@ -39,6 +43,8 @@ class CartridgeRepositoryImpl
     final cartridges = await getAll(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
+      whereColumn: 'is_deleted',
+      whereArg: 0,
     );
     return cartridges.fold(
       (l) => Left(l),
@@ -53,6 +59,7 @@ class CartridgeRepositoryImpl
     required String model,
     String? inventoryNumber,
     required bool isInRepair,
+    required bool isDeleted,
   }) async {
     return await updateObject(
       id: id,
@@ -63,6 +70,7 @@ class CartridgeRepositoryImpl
         model: model,
         inventoryNumber: inventoryNumber,
         isInRepair: isInRepair,
+        isInDeleted: isDeleted,
       ).toMap(),
     ).then(
       (value) => value.fold(

@@ -10,7 +10,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
   CartridgeCubit() : super(const CartridgeState());
 
   final _repository = AppModule.getCartridgeRepository();
-  final _repairRepository = AppModule.getRepairRepository();
 
   Future<void> loadAllCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
@@ -201,6 +200,7 @@ class CartridgeCubit extends Cubit<CartridgeState> {
     required String model,
     String? inventoryNumber,
     bool isInRepair = false,
+    bool isDeleted = false,
   }) async {
     emit(state.copyWith(updateCartridgeState: ModelState.loading()));
 
@@ -210,7 +210,9 @@ class CartridgeCubit extends Cubit<CartridgeState> {
             mark: mark,
             model: model,
             inventoryNumber: inventoryNumber,
-            isInRepair: isInRepair)
+            isInRepair: isInRepair,
+            isDeleted: isDeleted
+    )
         .then(
           (result) => result.fold((l) {
             emit(state.copyWith(

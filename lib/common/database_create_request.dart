@@ -1,4 +1,5 @@
 part 'db_select_requests.dart';
+
 abstract class DatabaseRequest {
   static const String dbName = 'CartridgeKeeper.db';
 
@@ -31,6 +32,7 @@ abstract class DatabaseRequest {
     _createTableCompatibility,
     _createTableRepairs,
     _createTableOffices,
+    _createUniqueIndexCartridges,
   ];
 
   static const String _createTableDepartments =
@@ -57,8 +59,12 @@ abstract class DatabaseRequest {
       'id integer not NULL primary key,'
       'mark text,'
       'model text not NULL,'
-      'inventory_number text unique,'
+      'inventory_number text,'
+      'is_deleted integer not null default 0 check(is_deleted IN (0,1)),'
       'is_in_repair integer not null default 0 check(is_in_repair IN (0,1)));';
+
+  static const String _createUniqueIndexCartridges =
+      'CREATE UNIQUE INDEX unique_cartridge ON $tableCartridges (inventory_number) where is_deleted = 0;';
 
   static const String _createTableCompatibility =
       'CREATE TABLE $tableCompatibility ('

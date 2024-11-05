@@ -22,13 +22,14 @@ abstract class CartridgeRepository {
   });
 
   ///Списание в утиль
-  Future<Either<Failure, String>> deleteCartridge(int id);
+  Future<Either<Failure, Cartridge>> deleteCartridge(int id);
 
   Future<Either<Failure, Cartridge>> updatePrinter({
     required int id,
     String? mark,
     required String model,
     String? inventoryNumber,
-    required bool isInRepair
+    required bool isInRepair,
+    required bool isDeleted,
   });
 }

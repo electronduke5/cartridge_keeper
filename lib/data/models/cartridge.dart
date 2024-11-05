@@ -7,6 +7,7 @@ class Cartridge extends CartridgeEntity {
     required super.inventoryNumber,
     super.id,
     required super.isInRepair,
+    required super.isInDeleted,
   });
 
   Map<String, dynamic> toMap() => {
@@ -14,6 +15,7 @@ class Cartridge extends CartridgeEntity {
         'model': model,
         'inventory_number': inventoryNumber,
         'is_in_repair': isInRepair ? 1 : 0,
+        'is_deleted': isInDeleted ? 1 : 0,
       };
 
   factory Cartridge.fromMap(Map<String, dynamic> json) => Cartridge(
@@ -22,5 +24,6 @@ class Cartridge extends CartridgeEntity {
         model: json['model'],
         inventoryNumber: json['inventory_number'],
         isInRepair: json['is_in_repair'] == 1,
+        isInDeleted: json['is_deleted'] == 1,
       );
 }

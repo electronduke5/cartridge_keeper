@@ -7,9 +7,15 @@ mixin DatabaseService<T extends Object> {
   Future<Either<Failure, List<T>>> getAll({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,
+    String? whereColumn,
+    dynamic whereArg,
   }) async {
     try {
-      final response = await DatabaseHelper.instance.queryAllRows(table);
+      final response = await DatabaseHelper.instance.queryAllRows(
+        table,
+        whereColumn: whereColumn,
+        whereArg: whereArg,
+      );
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {
@@ -24,7 +30,10 @@ mixin DatabaseService<T extends Object> {
     required List<String> referenceColumns,
   }) async {
     try {
-      final response = await DatabaseHelper.instance.queryAllRowsWithReference(table: table, referenceTables: referenceTables, referenceColumns: referenceColumns);
+      final response = await DatabaseHelper.instance.queryAllRowsWithReference(
+          table: table,
+          referenceTables: referenceTables,
+          referenceColumns: referenceColumns);
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {
@@ -32,22 +41,21 @@ mixin DatabaseService<T extends Object> {
     }
   }
 
-
-
-  Future<Either<Failure,List<T>>> search({
+  Future<Either<Failure, List<T>>> search({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,
     required String searchingColumn,
     required String searchingValue,
-}) async {
+  }) async {
     try {
-      final response = await DatabaseHelper.instance.searchQuery(table, searchingColumn, searchingValue);
+      final response = await DatabaseHelper.instance
+          .searchQuery(table, searchingColumn, searchingValue);
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
-}
+  }
 
   Future<Either<Failure, T>> getObjectById({
     required T Function(Map<String, dynamic>) fromMap,
@@ -85,7 +93,7 @@ mixin DatabaseService<T extends Object> {
       final response = await DatabaseHelper.instance.insert(data, table);
       return Right(fromMap(response));
     } on DatabaseException catch (error) {
-      //print('DB UNIQUE ERROR: ${error}');
+      print('DB UNIQUE ERROR: ${error}');
       //print('ERROR Result code: ${error.getResultCode()}');
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
@@ -98,9 +106,12 @@ mixin DatabaseService<T extends Object> {
     required int id,
   }) async {
     try {
+      print(data);
       final response = await DatabaseHelper.instance.update(id, data, table);
+
       return Right(fromMap(response));
     } on DatabaseException catch (error) {
+      print('DB UNIQUE ERROR: ${error}');
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
   }

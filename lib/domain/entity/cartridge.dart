@@ -4,6 +4,7 @@ class CartridgeEntity {
   final String model;
   final String? inventoryNumber;
   final bool isInRepair;
+  final bool isInDeleted;
 
   CartridgeEntity({
     this.id = 0,
@@ -11,5 +12,6 @@ class CartridgeEntity {
     required this.model,
     this.inventoryNumber,
     required this.isInRepair,
+    required this.isInDeleted,
   });
 }

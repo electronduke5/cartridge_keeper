@@ -6,7 +6,7 @@ class CartridgeState {
   final ModelState<Cartridge> getCartridgeByColumnState;
   final ModelState<Cartridge> createCartridgeState;
   final ModelState<Cartridge> updateCartridgeState;
-  final ModelState<String>? deleteCartridgeState;
+  final ModelState<Cartridge>? deleteCartridgeState;
 
   const CartridgeState({
     this.getCartridgesState = const IdleState(),
@@ -23,7 +23,7 @@ class CartridgeState {
     ModelState<Cartridge>? getCartridgeByColumnState,
     ModelState<Cartridge>? createCartridgeState,
     ModelState<Cartridge>? updateCartridgeState,
-    ModelState<String>? deleteCartridgeState,
+    ModelState<Cartridge>? deleteCartridgeState,
   }) =>
       CartridgeState(
         getCartridgesState: getCartridgesState ?? this.getCartridgesState,

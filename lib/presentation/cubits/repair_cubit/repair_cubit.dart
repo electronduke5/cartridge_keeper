@@ -18,7 +18,6 @@ class RepairCubit extends Cubit<RepairState> {
   RepairCubit() : super(const RepairState());
 
   final _repository = AppModule.getRepairRepository();
-  final _cartridgeRepository = AppModule.getCartridgeRepository();
 
   Future<void> creatingPDF(List<Repair> list) async {
     final pdf = pw.Document();
@@ -26,7 +25,7 @@ class RepairCubit extends Cubit<RepairState> {
     pdf.addPage(await RepairsPdf.repairsPage(list));
     String? outputFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Выберите папку для сохранения',
-      fileName: 'Отчёт ${DateTime.now().toLocalFormat}.pdf',
+      fileName: 'Отчёт по ремонтам картриджей ${DateTime.now().toLocalFormat}.pdf',
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );

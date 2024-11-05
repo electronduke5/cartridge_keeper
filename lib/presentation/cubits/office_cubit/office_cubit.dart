@@ -1,10 +1,17 @@
+import 'dart:io';
+
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/data/models/cartridge.dart';
 import 'package:cartridge_keeper/data/models/department.dart';
+import 'package:cartridge_keeper/presentation/pages/replacement_pdf_page.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/office.dart';
 import '../../di/app_module.dart';
 import '../model_state.dart';
+
+import 'package:pdf/widgets.dart' as pw;
 
 part 'office_state.dart';
 
@@ -12,6 +19,22 @@ class OfficeCubit extends Cubit<OfficeState> {
   OfficeCubit() : super(const OfficeState());
 
   final _repository = AppModule.getOfficeRepository();
+
+  Future<void> createPDF(List<Office> list) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(await ReplacementPdf.replacementPage(list));
+    String? outputFile = await FilePicker.platform.saveFile(
+      dialogTitle: 'Выберите папку для сохранения',
+      fileName: 'Отчёт по заменам картриджей ${DateTime.now().toLocalFormat}.pdf',
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    try {
+      File file = File(outputFile!);
+      await file.writeAsBytes(await pdf.save());
+    } catch (e) {}
+  }
 
   Future<void> changeCartridge(Cartridge? cartridge) async {
     emit(state.copyWith(changedCartridge: cartridge));

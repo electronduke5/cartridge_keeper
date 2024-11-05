@@ -93,6 +93,20 @@ class ReplacingCartridgesPage extends StatelessWidget {
                   icon: const Icon(Icons.add),
                   label: const Text('Добавить замену картриджа'),
                 ),
+                const SizedBox(width: 10),
+                BlocBuilder<OfficeCubit, OfficeState>(
+                  builder: (context, state) {
+                    return ElevatedButton.icon(
+                      onPressed: () async {
+                        await context
+                            .read<OfficeCubit>()
+                            .createPDF(state.getOfficesState.item!);
+                      },
+                      icon: const Icon(Icons.print_outlined),
+                      label: const Text('PDF'),
+                    );
+                  },
+                ),
               ],
             ),
           ],

@@ -24,7 +24,7 @@ class ReplacementCartridgeDialog {
         TextEditingController(text: DateTime.now().toLocalFormat);
 
     final Future<void> loadData = Future.wait([
-      cartridgeCubit.loadOnlyAvailableCartridges(),
+      cartridgeCubit.loadOnlyAvailableCartridges(isIncludingReplacement: true),
       departmentCubit.loadAllDepartments(),
     ]);
 
@@ -164,6 +164,10 @@ class ReplacementCartridgeDialog {
                                       cartridge: state.changedCartridge!,
                                     )
                                     ..loadAllOffices();
+                                  context
+                                      .read<CartridgeCubit>()
+                                      .makeReplacement(
+                                          state.changedCartridge!.id);
                                   Navigator.of(context).pop();
                                 }
                               },

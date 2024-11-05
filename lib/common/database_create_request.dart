@@ -61,6 +61,7 @@ abstract class DatabaseRequest {
       'model text not NULL,'
       'inventory_number text,'
       'is_deleted integer not null default 0 check(is_deleted IN (0,1)),'
+      'is_replaced integer not null default 0 check(is_deleted IN (0,1)),'
       'is_in_repair integer not null default 0 check(is_in_repair IN (0,1)));';
 
   static const String _createUniqueIndexCartridges =

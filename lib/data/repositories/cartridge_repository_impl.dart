@@ -20,7 +20,8 @@ class CartridgeRepositoryImpl
         model: model,
         inventoryNumber: inventoryNumber,
         isInRepair: false,
-        isInDeleted: false,
+        isDeleted: false,
+        isReplaced: false,
       ).toMap(),
     );
     return createdCartridge.fold((l) => Left(l), (r) => Right(r));
@@ -53,13 +54,14 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Cartridge>> updatePrinter({
+  Future<Either<Failure, Cartridge>> updateCartridge({
     required int id,
     String? mark,
     required String model,
     String? inventoryNumber,
     required bool isInRepair,
     required bool isDeleted,
+    required bool isReplaced,
   }) async {
     return await updateObject(
       id: id,
@@ -70,7 +72,8 @@ class CartridgeRepositoryImpl
         model: model,
         inventoryNumber: inventoryNumber,
         isInRepair: isInRepair,
-        isInDeleted: isDeleted,
+        isDeleted: isDeleted,
+        isReplaced: isReplaced,
       ).toMap(),
     ).then(
       (value) => value.fold(
@@ -128,23 +131,22 @@ class CartridgeRepositoryImpl
     final cartridge = await updateObject(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
-      data: {'is_in_repair': 1},
+      data: {'is_in_repair': 1, 'is_replaced': 0},
       id: id,
     );
     print('sendToRepair: ${cartridge.fold((l) => l, (r) => r.toMap())}');
     return cartridge.fold((l) => Left(l), (r) => Right(r));
   }
 
-// @override
-// Future<Either<Failure, Cartridge?>> getCartridgeByColumn( String columnName, dynamic columnValue) async {
-//   return await getObjectByColumn(
-//     columnName: columnName,
-//     columnValue: columnValue,
-//     table: DatabaseRequest.tableCartridges,
-//     fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
-//   ).then((value) => value.fold(
-//         (l) => Left(l),
-//         (r) => Right(r),
-//       ));
-// }
+  @override
+  Future<Either<Failure, Cartridge>> replacement(int id) async {
+    final cartridge = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+      data: {'is_replaced': 1},
+      id: id,
+    );
+    print('makeReplacement: ${cartridge.fold((l) => l, (r) => r.toMap())}');
+    return cartridge.fold((l) => Left(l), (r) => Right(r));
+  }
 }

@@ -13,6 +13,7 @@ abstract class CartridgeRepository {
 
   Future<Either<Failure, Cartridge>> sendToRepair(int id);
   Future<Either<Failure, Cartridge>> returnFromRepair(int id);
+  Future<Either<Failure, Cartridge>> replacement(int id);
 
 
   Future<Either<Failure, Cartridge>> createCartridge({
@@ -24,12 +25,13 @@ abstract class CartridgeRepository {
   ///Списание в утиль
   Future<Either<Failure, Cartridge>> deleteCartridge(int id);
 
-  Future<Either<Failure, Cartridge>> updatePrinter({
+  Future<Either<Failure, Cartridge>> updateCartridge({
     required int id,
     String? mark,
     required String model,
     String? inventoryNumber,
     required bool isInRepair,
     required bool isDeleted,
+    required bool isReplaced,
   });
 }

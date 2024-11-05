@@ -66,16 +66,24 @@ class CartridgeCubit extends Cubit<CartridgeState> {
   //   }
   // }
 
-  Future<void> loadOnlyAvailableCartridges() async {
+  Future<void> loadOnlyAvailableCartridges(
+      {bool isIncludingReplacement = false}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
     final availableCartridges = await _repository.getAllCartridges().then(
           (result) => result.fold(
             (l) => null,
-            (r) => r.where((cartridge) => cartridge.isInRepair == false).toList(),
+            (r) => r
+                .where(
+                  (cartridge) => isIncludingReplacement
+                      ? cartridge.isInRepair == false &&
+                          cartridge.isReplaced == false
+                      : cartridge.isInRepair == false,
+                )
+                .toList(),
           ),
         );
-    print('availableCartridges: $availableCartridges');
+    print('availableCartridges: ${availableCartridges?.map((e) => e.toMap())}');
     if (availableCartridges != null) {
       emit(state.copyWith(
           getCartridgesState: ModelState.loaded(availableCartridges)));
@@ -83,7 +91,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
       emit(state.copyWith(
           getCartridgesState: ModelState.failed('Картриджей нет!')));
     }
-
   }
 
   Future<void> addCartridge(
@@ -201,18 +208,20 @@ class CartridgeCubit extends Cubit<CartridgeState> {
     String? inventoryNumber,
     bool isInRepair = false,
     bool isDeleted = false,
+    bool isReplaced = false,
   }) async {
     emit(state.copyWith(updateCartridgeState: ModelState.loading()));
 
     await _repository
-        .updatePrinter(
-            id: id,
-            mark: mark,
-            model: model,
-            inventoryNumber: inventoryNumber,
-            isInRepair: isInRepair,
-            isDeleted: isDeleted
-    )
+        .updateCartridge(
+          id: id,
+          mark: mark,
+          model: model,
+          inventoryNumber: inventoryNumber,
+          isInRepair: isInRepair,
+          isDeleted: isDeleted,
+          isReplaced: isReplaced,
+        )
         .then(
           (result) => result.fold((l) {
             emit(state.copyWith(
@@ -222,6 +231,25 @@ class CartridgeCubit extends Cubit<CartridgeState> {
             emit(state.copyWith(updateCartridgeState: ModelState.loaded(r)));
             emit(state.copyWith(createCartridgeState: ModelState.idle()));
           }),
+        );
+  }
+
+  Future<void> makeReplacement(int id) async {
+    emit(state.copyWith(updateCartridgeState: ModelState.loading()));
+
+    await _repository.replacement(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
         );
   }
 

@@ -69,4 +69,23 @@ class OfficeCubit extends Cubit<OfficeState> {
           ),
         );
   }
+
+  Future<void> deleteOffice(int id) async {
+    emit(state.copyWith(deleteOfficeState: ModelState.loading()));
+
+    await _repository.deleteOffice(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                deleteOfficeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                deleteOfficeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
 }

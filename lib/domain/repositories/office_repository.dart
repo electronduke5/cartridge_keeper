@@ -22,4 +22,6 @@ abstract class OfficeRepository {
     required Department department,
     required Cartridge cartridge,
   });
+
+  Future<Either<Failure, String>> deleteOffice(int id);
 }

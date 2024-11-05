@@ -106,8 +106,6 @@ class CartridgeRepositoryImpl
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
     );
-    print(
-        'searchCartridges: ${cartridges.fold((l) => l, (r) => r.map((element) => element.toMap()))}');
     return cartridges.fold(
       (l) => Left(l),
       (r) => Right(r),
@@ -122,7 +120,6 @@ class CartridgeRepositoryImpl
       data: {'is_in_repair': 0},
       id: id,
     );
-    print('returnFromRepair: ${cartridge.fold((l) => l, (r) => r.toMap())}');
     return cartridge.fold((l) => Left(l), (r) => Right(r));
   }
 
@@ -134,7 +131,6 @@ class CartridgeRepositoryImpl
       data: {'is_in_repair': 1, 'is_replaced': 0},
       id: id,
     );
-    print('sendToRepair: ${cartridge.fold((l) => l, (r) => r.toMap())}');
     return cartridge.fold((l) => Left(l), (r) => Right(r));
   }
 
@@ -146,7 +142,17 @@ class CartridgeRepositoryImpl
       data: {'is_replaced': 1},
       id: id,
     );
-    print('makeReplacement: ${cartridge.fold((l) => l, (r) => r.toMap())}');
+    return cartridge.fold((l) => Left(l), (r) => Right(r));
+  }
+
+  @override
+  Future<Either<Failure, Cartridge>> returnFromReplacement(int id) async {
+    final cartridge = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+      data: {'is_replaced': 0},
+      id: id,
+    );
     return cartridge.fold((l) => Left(l), (r) => Right(r));
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/office.dart';
+import '../cubits/cartridge_cubit/cartridge_cubit.dart';
+import '../cubits/office_cubit/office_cubit.dart';
 
 class ReplacementCartridgeWidget extends StatelessWidget {
   const ReplacementCartridgeWidget({super.key, required this.office});
@@ -16,9 +19,32 @@ class ReplacementCartridgeWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              office.department.name,
-              style: const TextStyle(fontSize: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  office.department.name,
+                  style: const TextStyle(fontSize: 15),
+                ),
+                BlocBuilder<OfficeCubit, OfficeState>(
+                  builder: (context, state) {
+                    return IconButton(
+                      onPressed: () {
+                        context.read<OfficeCubit>()
+                          ..deleteOffice(office.id)
+                          ..loadAllOffices();
+                        context
+                            .read<CartridgeCubit>()
+                            .returnFromReplacement(office.cartridge.id);
+                      },
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),

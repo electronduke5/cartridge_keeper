@@ -78,4 +78,17 @@ class OfficeRepositoryImpl
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, String>> deleteOffice(int id) async {
+    return await deleteObject(
+      id: id,
+      table: DatabaseRequest.tableOffices,
+    ).then(
+      (result) => result.fold(
+        (l) => Left(l),
+        (r) => Right(r),
+      ),
+    );
+  }
 }

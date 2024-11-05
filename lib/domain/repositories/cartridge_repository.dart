@@ -8,13 +8,15 @@ abstract class CartridgeRepository {
 
   Future<Either<Failure, Cartridge?>> getCartridgeById(int id);
 
-  // Future<Either<Failure, Cartridge?>> getCartridgeByColumn(String column, dynamic columnValue);
   Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue);
 
   Future<Either<Failure, Cartridge>> sendToRepair(int id);
+
   Future<Either<Failure, Cartridge>> returnFromRepair(int id);
+
   Future<Either<Failure, Cartridge>> replacement(int id);
 
+  Future<Either<Failure, Cartridge>> returnFromReplacement(int id);
 
   Future<Either<Failure, Cartridge>> createCartridge({
     String? mark,

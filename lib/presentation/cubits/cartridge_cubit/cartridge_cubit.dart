@@ -27,45 +27,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
-  // Future<void> loadOnlyAvailableCartridges() async {
-  //   emit(state.copyWith(getCartridgesState: ModelState.loading()));
-  //
-  //   final allCartridges = await _repository.getAllCartridges().then(
-  //         (result) => result.fold(
-  //           (l) => null,
-  //           (r) => r,
-  //         ),
-  //       );
-  //
-  //   if (allCartridges != null) {
-  //     final allRepairs = await _repairRepository.getAllRepairs().then(
-  //           (result) => result.fold(
-  //             (l) => null,
-  //             (r) => r,
-  //           ),
-  //         );
-  //     if (allRepairs != null) {
-  //       final repairCartridgeIds = allRepairs
-  //           .where((repair) => repair.endDate == null)
-  //           .map((repair) => repair.cartridge.id)
-  //           .toSet();
-  //
-  //       final availableCartridges = allCartridges
-  //           .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
-  //           .where((cartridge) => cartridge.inventoryNumber != null)
-  //           .toList();
-  //       emit(state.copyWith(
-  //           getCartridgesState: ModelState.loaded(availableCartridges)));
-  //     } else {
-  //       emit(state.copyWith(
-  //           getCartridgesState: ModelState.loaded(allCartridges)));
-  //     }
-  //   } else {
-  //     emit(state.copyWith(
-  //         getCartridgesState: ModelState.failed('Картриджей нет!')));
-  //   }
-  // }
-
   Future<void> loadOnlyAvailableCartridges(
       {bool isIncludingReplacement = false}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
@@ -83,7 +44,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
                 .toList(),
           ),
         );
-    print('availableCartridges: ${availableCartridges?.map((e) => e.toMap())}');
     if (availableCartridges != null) {
       emit(state.copyWith(
           getCartridgesState: ModelState.loaded(availableCartridges)));
@@ -182,25 +142,6 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
-  // Future<void> loadCartridgeByColumn(String columnName, String columnValue) async {
-  //   emit(state.copyWith(getCartridgeByColumnState: ModelState.loading()));
-  //
-  //   await _repository.getCartridgeByColumn(columnName, columnValue).then(
-  //         (result) => result.fold(
-  //           (l) => emit(
-  //         state.copyWith(
-  //           getCartridgeByColumnState: ModelState.failed(l.error),
-  //         ),
-  //       ),
-  //           (r) => emit(
-  //         state.copyWith(
-  //           getCartridgeByColumnState: ModelState.loaded(r),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Future<void> editCartridge({
     required int id,
     String? mark,
@@ -238,6 +179,25 @@ class CartridgeCubit extends Cubit<CartridgeState> {
     emit(state.copyWith(updateCartridgeState: ModelState.loading()));
 
     await _repository.replacement(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
+  Future<void> returnFromReplacement(int id) async {
+    emit(state.copyWith(updateCartridgeState: ModelState.loading()));
+
+    await _repository.returnFromReplacement(id).then(
           (result) => result.fold(
             (l) => emit(
               state.copyWith(

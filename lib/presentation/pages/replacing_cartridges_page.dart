@@ -2,13 +2,13 @@ import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/presentation/cubits/cartridge_cubit/cartridge_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/office_cubit/office_cubit.dart';
 import 'package:cartridge_keeper/presentation/widgets/dialogs/replacement_cartridge_dialog.dart';
+import 'package:cartridge_keeper/presentation/widgets/replacement_cartridge_layout_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/office.dart';
 import '../cubits/department_cubit/department_cubit.dart';
 import '../cubits/model_state.dart';
-import '../widgets/replacement_cartridge_widget.dart';
 
 class ReplacingCartridgesPage extends StatelessWidget {
   const ReplacingCartridgesPage({super.key});
@@ -49,45 +49,20 @@ class ReplacingCartridgesPage extends StatelessWidget {
                               ),
                             );
                           } else {
-                            return ListView.builder(
-                              itemCount: state.getOfficesState.item!.length,
-                              itemBuilder: (context, index) {
-                                final List<Office> listOffices =
-                                    state.getOfficesState.item!;
-                                listOffices.sort(
-                                  (a, b) => a.replacementDate.parseLocalDate
-                                      .compareTo(
-                                          b.replacementDate.parseLocalDate),
-                                );
-
-                                final replacement = listOffices[index];
-                                final previousReplacement =
-                                    index > 0 ? listOffices[index - 1] : null;
-                                final isNewDate = previousReplacement == null ||
-                                    replacement
-                                            .replacementDate.parseLocalDate !=
-                                        previousReplacement
-                                            .replacementDate.parseLocalDate;
-
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (isNewDate)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 10),
-                                        child: Text(
-                                          replacement.replacementDate,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ReplacementCartridgeWidget(
-                                        office: replacement),
-                                  ],
-                                );
-                              },
+                            final List<Office> listOffices =
+                                state.getOfficesState.item!;
+                            listOffices.sort(
+                              (a, b) => a.replacementDate.parseLocalDate
+                                  .compareTo(b.replacementDate.parseLocalDate),
+                            );
+                            return ReplacementCartridgeLayoutGrid(
+                              crossAxisCount:
+                                  MediaQuery.of(context).size.width > 1265
+                                      ? 3
+                                      : MediaQuery.of(context).size.width > 900
+                                          ? 2
+                                          : 1,
+                              items: listOffices,
                             );
                           }
                         }(),

@@ -57,7 +57,8 @@ abstract class DatabaseRequest {
       'id integer not NULL primary key,'
       'mark text,'
       'model text not NULL,'
-      'inventory_number text unique);';
+      'inventory_number text unique,'
+      'is_in_repair integer not null default 0 check(is_in_repair IN (0,1)));';
 
   static const String _createTableCompatibility =
       'CREATE TABLE $tableCompatibility ('

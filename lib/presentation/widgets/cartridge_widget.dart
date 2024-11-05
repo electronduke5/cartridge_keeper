@@ -38,6 +38,12 @@ class CartridgeWidget extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(width: 20),
+            if (cartridge.isInRepair)
+              const Text(
+                'В ремонте',
+                style: TextStyle(fontSize: 20, color: Colors.red,),
+              ),
             const Expanded(child: SizedBox()),
             BlocBuilder<CartridgeCubit, CartridgeState>(
               builder: (context, state) {

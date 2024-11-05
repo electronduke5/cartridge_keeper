@@ -61,6 +61,7 @@ class RepairCardWidget extends StatelessWidget {
                               ..returnFromRepair(
                                   repair.id, DateTime.now().toLocalFormat)
                               ..loadAllRepairs();
+                            context.read<CartridgeCubit>().returnFromRepair(repair.cartridge.id);
                           },
                           icon: const Icon(
                             Icons.task_alt,
@@ -90,6 +91,7 @@ class RepairCardWidget extends StatelessWidget {
                         context.read<RepairCubit>()
                           ..deleteRepair(repair.id)
                           ..loadAllRepairs();
+                        context.read<CartridgeCubit>().returnFromRepair(repair.cartridge.id);
                       },
                       icon: const Icon(
                         Icons.delete_outline,

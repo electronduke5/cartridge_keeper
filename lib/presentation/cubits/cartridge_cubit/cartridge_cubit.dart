@@ -28,43 +28,63 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
+  // Future<void> loadOnlyAvailableCartridges() async {
+  //   emit(state.copyWith(getCartridgesState: ModelState.loading()));
+  //
+  //   final allCartridges = await _repository.getAllCartridges().then(
+  //         (result) => result.fold(
+  //           (l) => null,
+  //           (r) => r,
+  //         ),
+  //       );
+  //
+  //   if (allCartridges != null) {
+  //     final allRepairs = await _repairRepository.getAllRepairs().then(
+  //           (result) => result.fold(
+  //             (l) => null,
+  //             (r) => r,
+  //           ),
+  //         );
+  //     if (allRepairs != null) {
+  //       final repairCartridgeIds = allRepairs
+  //           .where((repair) => repair.endDate == null)
+  //           .map((repair) => repair.cartridge.id)
+  //           .toSet();
+  //
+  //       final availableCartridges = allCartridges
+  //           .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
+  //           .where((cartridge) => cartridge.inventoryNumber != null)
+  //           .toList();
+  //       emit(state.copyWith(
+  //           getCartridgesState: ModelState.loaded(availableCartridges)));
+  //     } else {
+  //       emit(state.copyWith(
+  //           getCartridgesState: ModelState.loaded(allCartridges)));
+  //     }
+  //   } else {
+  //     emit(state.copyWith(
+  //         getCartridgesState: ModelState.failed('Картриджей нет!')));
+  //   }
+  // }
+
   Future<void> loadOnlyAvailableCartridges() async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
-    final allCartridges = await _repository.getAllCartridges().then(
+    final availableCartridges = await _repository.getAllCartridges().then(
           (result) => result.fold(
             (l) => null,
-            (r) => r,
+            (r) => r.where((cartridge) => cartridge.isInRepair == false).toList(),
           ),
         );
-
-    if (allCartridges != null) {
-      final allRepairs = await _repairRepository.getAllRepairs().then(
-            (result) => result.fold(
-              (l) => null,
-              (r) => r,
-            ),
-          );
-      if (allRepairs != null) {
-        final repairCartridgeIds = allRepairs
-            .where((repair) => repair.endDate == null)
-            .map((repair) => repair.cartridge.id)
-            .toSet();
-
-        final availableCartridges = allCartridges
-            .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
-            .where((cartridge) => cartridge.inventoryNumber != null)
-            .toList();
-        emit(state.copyWith(
-            getCartridgesState: ModelState.loaded(availableCartridges)));
-      } else {
-        emit(state.copyWith(
-            getCartridgesState: ModelState.loaded(allCartridges)));
-      }
+    print('availableCartridges: $availableCartridges');
+    if (availableCartridges != null) {
+      emit(state.copyWith(
+          getCartridgesState: ModelState.loaded(availableCartridges)));
     } else {
       emit(state.copyWith(
           getCartridgesState: ModelState.failed('Картриджей нет!')));
     }
+
   }
 
   Future<void> addCartridge(
@@ -175,16 +195,22 @@ class CartridgeCubit extends Cubit<CartridgeState> {
   //   );
   // }
 
-  Future<void> editCartridge(
-      {required int id,
-      String? mark,
-      required String model,
-      String? inventoryNumber}) async {
+  Future<void> editCartridge({
+    required int id,
+    String? mark,
+    required String model,
+    String? inventoryNumber,
+    bool isInRepair = false,
+  }) async {
     emit(state.copyWith(updateCartridgeState: ModelState.loading()));
 
     await _repository
         .updatePrinter(
-            id: id, mark: mark, model: model, inventoryNumber: inventoryNumber)
+            id: id,
+            mark: mark,
+            model: model,
+            inventoryNumber: inventoryNumber,
+            isInRepair: isInRepair)
         .then(
           (result) => result.fold((l) {
             emit(state.copyWith(
@@ -194,6 +220,44 @@ class CartridgeCubit extends Cubit<CartridgeState> {
             emit(state.copyWith(updateCartridgeState: ModelState.loaded(r)));
             emit(state.copyWith(createCartridgeState: ModelState.idle()));
           }),
+        );
+  }
+
+  Future<void> sendToRepair(int id) async {
+    emit(state.copyWith(updateCartridgeState: ModelState.loading()));
+
+    await _repository.sendToRepair(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
+  Future<void> returnFromRepair(int id) async {
+    emit(state.copyWith(updateCartridgeState: ModelState.loading()));
+
+    await _repository.returnFromRepair(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateCartridgeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
         );
   }
 }

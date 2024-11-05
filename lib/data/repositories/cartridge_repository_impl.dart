@@ -15,9 +15,12 @@ class CartridgeRepositoryImpl
     final createdCartridge = await createObject(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
-      data:
-          Cartridge(mark: mark, model: model, inventoryNumber: inventoryNumber)
-              .toMap(),
+      data: Cartridge(
+        mark: mark,
+        model: model,
+        inventoryNumber: inventoryNumber,
+        isInRepair: false,
+      ).toMap(),
     );
     return createdCartridge.fold((l) => Left(l), (r) => Right(r));
   }
@@ -44,18 +47,23 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Cartridge>> updatePrinter(
-      {required int id,
-      String? mark,
-      required String model,
-      String? inventoryNumber}) async {
+  Future<Either<Failure, Cartridge>> updatePrinter({
+    required int id,
+    String? mark,
+    required String model,
+    String? inventoryNumber,
+    required bool isInRepair,
+  }) async {
     return await updateObject(
       id: id,
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
-      data:
-          Cartridge(mark: mark, model: model, inventoryNumber: inventoryNumber)
-              .toMap(),
+      data: Cartridge(
+        mark: mark,
+        model: model,
+        inventoryNumber: inventoryNumber,
+        isInRepair: isInRepair,
+      ).toMap(),
     ).then(
       (value) => value.fold(
         (l) => Left(l),
@@ -93,6 +101,30 @@ class CartridgeRepositoryImpl
       (l) => Left(l),
       (r) => Right(r),
     );
+  }
+
+  @override
+  Future<Either<Failure, Cartridge>> returnFromRepair(int id) async {
+    final cartridge = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+      data: {'is_in_repair': 0},
+      id: id,
+    );
+    print('returnFromRepair: ${cartridge.fold((l) => l, (r) => r.toMap())}');
+    return cartridge.fold((l) => Left(l), (r) => Right(r));
+  }
+
+  @override
+  Future<Either<Failure, Cartridge>> sendToRepair(int id) async {
+    final cartridge = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+      data: {'is_in_repair': 1},
+      id: id,
+    );
+    print('sendToRepair: ${cartridge.fold((l) => l, (r) => r.toMap())}');
+    return cartridge.fold((l) => Left(l), (r) => Right(r));
   }
 
 // @override

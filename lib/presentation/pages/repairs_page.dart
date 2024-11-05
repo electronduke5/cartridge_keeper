@@ -143,7 +143,7 @@ class RepairsPage extends StatelessWidget {
                       context: context,
                       repairCubit: context.read<RepairCubit>(),
                       cartridgeCubit: context.read<CartridgeCubit>()
-                        ..loadAllCartridges(),
+                        ..loadOnlyAvailableCartridges(),
                     );
                   },
                   icon: const Icon(Icons.add),

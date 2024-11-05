@@ -72,11 +72,7 @@ class RepairDialogs {
                                     return null;
                                   },
                                   value: repair?.cartridge,
-                                  items: repairCubit
-                                      .getAvailableCartridges(
-                                          state.getCartridgesState.item!,
-                                          repairCubit
-                                              .state.getRepairsState.item!)
+                                  items: state.getCartridgesState.item!
                                       .map((e) => DropdownMenuItem(
                                             value: e,
                                             child: Text(
@@ -189,6 +185,8 @@ class RepairDialogs {
                                 ..addRepair(startDateController.text,
                                     state.changedCartridge!)
                                 ..loadAllRepairs();
+                              cartridgeCubit
+                                  .sendToRepair(state.changedCartridge!.id);
                             } else {
                               repairCubit
                                 ..editRepair(
@@ -199,6 +197,11 @@ class RepairDialogs {
                                         : endDateController.text,
                                     cartridge)
                                 ..loadAllRepairs();
+
+                              endDateController.text.isEmpty
+                                  ? cartridgeCubit.sendToRepair(cartridge.id)
+                                  : cartridgeCubit
+                                      .returnFromRepair(cartridge.id);
                             }
                             formKey.currentState!.reset();
                             Navigator.of(context).pop();

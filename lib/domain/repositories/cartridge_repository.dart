@@ -11,6 +11,10 @@ abstract class CartridgeRepository {
   // Future<Either<Failure, Cartridge?>> getCartridgeByColumn(String column, dynamic columnValue);
   Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue);
 
+  Future<Either<Failure, Cartridge>> sendToRepair(int id);
+  Future<Either<Failure, Cartridge>> returnFromRepair(int id);
+
+
   Future<Either<Failure, Cartridge>> createCartridge({
     String? mark,
     required String model,
@@ -25,5 +29,6 @@ abstract class CartridgeRepository {
     String? mark,
     required String model,
     String? inventoryNumber,
+    required bool isInRepair
   });
 }

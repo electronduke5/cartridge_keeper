@@ -18,6 +18,7 @@ class RepairCubit extends Cubit<RepairState> {
   RepairCubit() : super(const RepairState());
 
   final _repository = AppModule.getRepairRepository();
+  final _cartridgeRepository = AppModule.getCartridgeRepository();
 
   Future<void> creatingPDF(List<Repair> list) async {
     final pdf = pw.Document();
@@ -75,16 +76,6 @@ class RepairCubit extends Cubit<RepairState> {
             ),
           ),
         );
-  }
-
-  List<Cartridge> getAvailableCartridges(
-      List<Cartridge> allCartridges, List<Repair> allRepairs) {
-    final repairCartridgeIds =
-        allRepairs.where((repair) => repair.endDate == null).map((repair) => repair.cartridge.id).toSet();
-    return allCartridges
-        .where((cartridge) => !repairCartridgeIds.contains(cartridge.id))
-        .where((cartridge) => cartridge.inventoryNumber != null)
-        .toList();
   }
 
   Future<void> addRepair(String startDate, Cartridge cartridge) async {

@@ -71,7 +71,8 @@ class RepairsPdf {
                       ),
                     ],
                   ),
-                  if (i == 0 || list[i].startDate != list[i - 1].startDate)
+                  if (i + 1 == list.length ||
+                      list[i].startDate != list[i + 1].startDate)
                     pw.TableRow(
                       decoration: const pw.BoxDecoration(
                         color: PdfColor.fromInt(0xFFE0E0E0),

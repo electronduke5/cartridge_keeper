@@ -36,7 +36,6 @@ class _StartDateFormFieldState extends State<StartDateFormField> {
             controller: widget.startDateController,
             readOnly: true,
             onTap: () async {
-              print('endDate: ${widget.endDate}');
               final date = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
@@ -49,9 +48,9 @@ class _StartDateFormFieldState extends State<StartDateFormField> {
         ),
         () {
           final startDate = widget.startDateController.text.parseLocalDate;
-          final maxDate = widget.endDate ?? DateTime.now().subtract(const Duration(days: 1));
-          if (startDate
-              .isBefore(maxDate)) {
+          final maxDate = widget.endDate ??
+              DateTime.now().subtract(const Duration(days: 1));
+          if (startDate.isBefore(maxDate)) {
             return IconButton(
               onPressed: () {
                 setState(() {

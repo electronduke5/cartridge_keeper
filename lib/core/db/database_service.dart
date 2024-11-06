@@ -110,7 +110,7 @@ mixin DatabaseService<T extends Object> {
       final response = await DatabaseHelper.instance.insert(data, table);
       return Right(fromMap(response));
     } on DatabaseException catch (error) {
-      print('DB UNIQUE ERROR: ${error}');
+      print('DB ERROR: $error');
       //print('ERROR Result code: ${error.getResultCode()}');
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
@@ -123,12 +123,10 @@ mixin DatabaseService<T extends Object> {
     required int id,
   }) async {
     try {
-      print(data);
       final response = await DatabaseHelper.instance.update(id, data, table);
 
       return Right(fromMap(response));
     } on DatabaseException catch (error) {
-      print('DB UNIQUE ERROR: ${error}');
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
   }

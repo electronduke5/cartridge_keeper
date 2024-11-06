@@ -103,7 +103,7 @@ class OfficeRepositoryImpl
       ],
       fromMap: (Map<String, dynamic> json) => Office.fromMap(json),
       table: DatabaseRequest.tableOffices,
-      searchingColumn: 'department_id',
+      searchingColumns: ['department_id'],
       searchingValue: departmentId.toString(),
     );
   }

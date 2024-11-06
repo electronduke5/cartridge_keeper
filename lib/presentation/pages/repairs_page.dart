@@ -28,7 +28,7 @@ class RepairsPage extends StatelessWidget {
               ),
             ),
             const Divider(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Expanded(
               child: BlocBuilder<RepairCubit, RepairState>(
                 builder: (context, state) {

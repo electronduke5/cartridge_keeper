@@ -4,11 +4,11 @@ import 'package:dartz/dartz.dart';
 import '../../data/models/cartridge.dart';
 
 abstract class CartridgeRepository {
-  Future<Either<Failure, List<Cartridge>>> getAllCartridges();
+  Future<Either<Failure, List<Cartridge>>> getAllCartridges({bool isDeleted = false});
 
   Future<Either<Failure, Cartridge?>> getCartridgeById(int id);
 
-  Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue);
+  Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue,{bool isDeleted = false});
 
   Future<Either<Failure, Cartridge>> sendToRepair(int id);
 
@@ -26,6 +26,8 @@ abstract class CartridgeRepository {
 
   ///Списание в утиль
   Future<Either<Failure, Cartridge>> deleteCartridge(int id);
+
+  Future<Either<Failure, Cartridge>> restoreCartridge(int id);
 
   Future<Either<Failure, Cartridge>> updateCartridge({
     required int id,

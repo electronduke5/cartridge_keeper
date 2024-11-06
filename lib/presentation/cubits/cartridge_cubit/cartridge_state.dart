@@ -7,6 +7,8 @@ class CartridgeState {
   final ModelState<Cartridge> createCartridgeState;
   final ModelState<Cartridge> updateCartridgeState;
   final ModelState<Cartridge>? deleteCartridgeState;
+  final ModelState<Cartridge>? restoreCartridgeState;
+  final bool viewIsDeleted;
 
   const CartridgeState({
     this.getCartridgesState = const IdleState(),
@@ -15,6 +17,8 @@ class CartridgeState {
     this.createCartridgeState = const IdleState(),
     this.updateCartridgeState = const IdleState(),
     this.deleteCartridgeState = const IdleState(),
+    this.restoreCartridgeState = const IdleState(),
+    this.viewIsDeleted = false,
   });
 
   CartridgeState copyWith({
@@ -24,6 +28,8 @@ class CartridgeState {
     ModelState<Cartridge>? createCartridgeState,
     ModelState<Cartridge>? updateCartridgeState,
     ModelState<Cartridge>? deleteCartridgeState,
+    ModelState<Cartridge>? restoreCartridgeState,
+    bool? viewIsDeleted,
   }) =>
       CartridgeState(
         getCartridgesState: getCartridgesState ?? this.getCartridgesState,
@@ -32,5 +38,7 @@ class CartridgeState {
         createCartridgeState: createCartridgeState ?? this.createCartridgeState,
         updateCartridgeState: updateCartridgeState ?? this.updateCartridgeState,
         deleteCartridgeState: deleteCartridgeState ?? this.deleteCartridgeState,
+        restoreCartridgeState: restoreCartridgeState ?? this.restoreCartridgeState,
+        viewIsDeleted: viewIsDeleted ?? this.viewIsDeleted,
       );
 }

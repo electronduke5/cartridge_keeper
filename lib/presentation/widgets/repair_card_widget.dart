@@ -56,6 +56,7 @@ class RepairCardWidget extends StatelessWidget {
                     () {
                       if (repair.endDate == null) {
                         return IconButton(
+                          tooltip: 'Вернуть из ремонта',
                           onPressed: () async {
                             context.read<RepairCubit>()
                               ..returnFromRepair(
@@ -70,6 +71,7 @@ class RepairCardWidget extends StatelessWidget {
                         );
                       }
                       return IconButton(
+                        tooltip: 'Редактировать',
                         onPressed: () async {
                           RepairDialogs.openDialog(
                             repair: repair,
@@ -87,6 +89,7 @@ class RepairCardWidget extends StatelessWidget {
                       );
                     }(),
                     IconButton(
+                      tooltip: 'Удалить',
                       onPressed: () async {
                         context.read<RepairCubit>()
                           ..deleteRepair(repair.id)

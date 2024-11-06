@@ -11,10 +11,14 @@ class CartridgeCubit extends Cubit<CartridgeState> {
 
   final _repository = AppModule.getCartridgeRepository();
 
-  Future<void> loadAllCartridges() async {
+  Future<void> changeDeletedCartridgesVisibility({bool? isDeleted}) async {
+    emit(state.copyWith(viewIsDeleted: isDeleted ?? !state.viewIsDeleted));
+  }
+
+  Future<void> loadAllCartridges({bool isDeleted = false}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
-    await _repository.getAllCartridges().then(
+    await _repository.getAllCartridges(isDeleted: isDeleted).then(
           (result) => result.fold(
             (l) => emit(
                 state.copyWith(getCartridgesState: ModelState.failed(l.error))),
@@ -85,10 +89,10 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
-  Future<void> searchCartridge(String inventoryNumber) async {
+  Future<void> searchCartridge(String searchString, {bool isDeleted = false}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
-    await _repository.searchCartridges(inventoryNumber).then(
+    await _repository.searchCartridges(searchString, isDeleted: isDeleted).then(
           (result) => result.fold(
             (l) => emit(
               state.copyWith(
@@ -117,6 +121,25 @@ class CartridgeCubit extends Cubit<CartridgeState> {
             (r) => emit(
               state.copyWith(
                 deleteCartridgeState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
+  Future restoreCartridge(int id) async {
+    emit(state.copyWith(restoreCartridgeState: ModelState.loading()));
+
+    await _repository.restoreCartridge(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                restoreCartridgeState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                restoreCartridgeState: ModelState.loaded(r),
               ),
             ),
           ),

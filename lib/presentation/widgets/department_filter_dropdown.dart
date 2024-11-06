@@ -49,6 +49,7 @@ class _DepartmentFilterDropdownState extends State<DepartmentFilterDropdown> {
             },
           ),
           IconButton(
+            tooltip: 'Сбросить фильтр',
             color: Colors.redAccent,
             onPressed: () {
               setState(() {

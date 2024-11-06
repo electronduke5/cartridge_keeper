@@ -52,26 +52,33 @@ class ReplacingCartridgesPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Text(
-                'Замена картриджей',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
+          IntrinsicHeight(
+            child: SizedBox.expand(
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Замена картриджей',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  IntrinsicWidth(
+                    child: BlocBuilder<DepartmentCubit, DepartmentState>(
+                      builder: (context, state) {
+                        return DepartmentFilterDropdown(
+                            departments: state.getDepartmentsState.item!);
+                      },
+                    ),
+                  )
+                ],
               ),
-              const Spacer(),
-              BlocBuilder<DepartmentCubit, DepartmentState>(
-                builder: (context, state) {
-                  return DepartmentFilterDropdown(
-                      departments: state.getDepartmentsState.item!);
-                },
-              )
-            ],
+            ),
           ),
           const Divider(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Expanded(
             child: BlocBuilder<OfficeCubit, OfficeState>(
               builder: (context, state) {

@@ -81,6 +81,7 @@ class CartridgeDialogs {
                       },
                       inputFormatters: [
                         UpperCaseTextFormatter(),
+                        LengthLimitingTextInputFormatter(20),
                       ],
                     ),
                     const Padding(
@@ -132,7 +133,9 @@ class CartridgeDialogs {
                                   model: modelController.text,
                                   inventoryNumber:
                                       inventoryNumberController.text)
-                              ..loadAllCartridges();
+                              ..loadAllCartridges()
+                              ..changeDeletedCartridgesVisibility(
+                                  isDeleted: false);
                           } else {
                             cartridgeCubit
                               ..editCartridge(
@@ -143,7 +146,9 @@ class CartridgeDialogs {
                                         ? null
                                         : inventoryNumberController.text,
                               )
-                              ..loadAllCartridges();
+                              ..loadAllCartridges()
+                              ..changeDeletedCartridgesVisibility(
+                                  isDeleted: false);
                           }
 
                           formKey.currentState!.reset();

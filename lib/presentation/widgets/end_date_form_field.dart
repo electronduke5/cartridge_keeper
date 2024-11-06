@@ -82,6 +82,7 @@ class _EndDateFormFieldState extends State<EndDateFormField> {
           }
         }(),
         IconButton(
+          tooltip: 'Очистить',
           onPressed: () {
             setState(() {
               widget.endDateController.clear();

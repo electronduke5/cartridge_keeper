@@ -2,10 +2,12 @@ import 'package:cartridge_keeper/presentation/cubits/cartridge_cubit/cartridge_c
 import 'package:cartridge_keeper/presentation/widgets/cartridge_widget.dart';
 import 'package:cartridge_keeper/presentation/widgets/dialogs/add_cartridge_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/cartridge.dart';
 import '../cubits/model_state.dart';
+import '../widgets/deleted_cartridges_checkbox.dart';
 
 class CartridgesPage extends StatelessWidget {
   const CartridgesPage({super.key});
@@ -18,44 +20,42 @@ class CartridgesPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Картриджи',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      child: BlocBuilder<CartridgeCubit, CartridgeState>(
-                        builder: (context, state) => TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Инв. №',
-                            prefixIcon: Icon(Icons.search),
-                          ),
-                          onChanged: (value) {
-                            context
-                                .read<CartridgeCubit>()
-                                .searchCartridge(value);
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    const Text('Фильтрация\nпо модели'),
-                  ],
+          Row(
+            children: [
+              const Text(
+                'Картриджи',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+              const Spacer(),
+              const Column(
+                children: [
+                  Text('Удалённые картриджи'),
+                  DeletedCartridgesCheckbox(),
+                ],
+              ),
+              const SizedBox(width: 20),
+              IntrinsicWidth(
+                child: BlocBuilder<CartridgeCubit, CartridgeState>(
+                  builder: (context, state) => TextField(
+                    inputFormatters: [LengthLimitingTextInputFormatter(5)],
+                    decoration: const InputDecoration(
+                      hintText: 'Поиск...',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) {
+                      context.read<CartridgeCubit>().searchCartridge(value,
+                          isDeleted: state.viewIsDeleted);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
+          const Divider(),
+          const SizedBox(height: 10),
           Expanded(
             child: BlocBuilder<CartridgeCubit, CartridgeState>(
               builder: (context, state) {

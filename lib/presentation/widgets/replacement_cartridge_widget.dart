@@ -29,6 +29,7 @@ class ReplacementCartridgeWidget extends StatelessWidget {
                 BlocBuilder<OfficeCubit, OfficeState>(
                   builder: (context, state) {
                     return IconButton(
+                      tooltip: 'Удалить',
                       color: Colors.red,
                       onPressed: () {
                         context.read<OfficeCubit>()

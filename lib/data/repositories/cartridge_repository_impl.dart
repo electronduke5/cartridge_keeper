@@ -29,6 +29,23 @@ class CartridgeRepositoryImpl
 
   @override
   Future<Either<Failure, Cartridge>> deleteCartridge(int id) async {
+    final cartridge = await getCartridgeById(id)
+        .then((value) => value.fold((l) => null, (r) => r));
+
+    if (cartridge != null &&
+        !cartridge.isInRepair &&
+        !cartridge.isReplaced &&
+        cartridge.isDeleted) {
+      final resultDelete = await deleteObject(
+        id: id,
+        table: DatabaseRequest.tableCartridges,
+      );
+      return resultDelete.fold((l) => Left(l), (r) {
+        print('Удалено навсегда');
+        return Right(cartridge);
+      });
+    }
+
     final resultSoftDelete = await updateObject(
       id: id,
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
@@ -40,12 +57,13 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<Cartridge>>> getAllCartridges() async {
+  Future<Either<Failure, List<Cartridge>>> getAllCartridges(
+      {bool isDeleted = false}) async {
     final cartridges = await getAll(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
       whereColumn: 'is_deleted',
-      whereArg: 0,
+      whereArg: isDeleted ? 1 : 0,
     );
     return cartridges.fold(
       (l) => Left(l),
@@ -99,11 +117,11 @@ class CartridgeRepositoryImpl
 
   @override
   Future<Either<Failure, List<Cartridge>>> searchCartridges(
-      String searchValue) async {
+      String searchValue, {bool isDeleted = false}) async {
     final cartridges = await search(
       whereColumn: 'is_deleted',
-      whereArg: '0',
-      searchingColumn: 'inventory_number',
+      whereArg: isDeleted ? '1' : '0',
+      searchingColumns: ['inventory_number', 'model'],
       searchingValue: searchValue,
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
@@ -153,6 +171,17 @@ class CartridgeRepositoryImpl
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
       data: {'is_replaced': 0},
+      id: id,
+    );
+    return cartridge.fold((l) => Left(l), (r) => Right(r));
+  }
+
+  @override
+  Future<Either<Failure, Cartridge>> restoreCartridge(int id) async {
+    final cartridge = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
+      table: DatabaseRequest.tableCartridges,
+      data: {'is_deleted': 0},
       id: id,
     );
     return cartridge.fold((l) => Left(l), (r) => Right(r));

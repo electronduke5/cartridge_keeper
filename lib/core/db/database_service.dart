@@ -44,7 +44,7 @@ mixin DatabaseService<T extends Object> {
   Future<Either<Failure, List<T>>> search({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,
-    required String searchingColumn,
+    required List<String> searchingColumns,
     required String searchingValue,
     List<String>? referenceTables,
     List<String>? referenceColumns,
@@ -55,7 +55,7 @@ mixin DatabaseService<T extends Object> {
       if (referenceTables != null && referenceColumns != null) {
         final response = await DatabaseHelper.instance.searchQueryWithReference(
           table: table,
-          searchingColumn: searchingColumn,
+          searchingColumns: searchingColumns,
           searchingValue: searchingValue,
           referenceTables: referenceTables,
           referenceColumns: referenceColumns,
@@ -66,7 +66,7 @@ mixin DatabaseService<T extends Object> {
         return Right(listT);
       }
       final response = await DatabaseHelper.instance
-          .searchQuery(table, searchingColumn, searchingValue, whereArg: whereArg, whereColumn: whereColumn);
+          .searchQuery(table, searchingColumns, searchingValue, whereArg: whereArg, whereColumn: whereColumn);
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {

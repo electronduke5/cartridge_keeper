@@ -12,69 +12,124 @@ class CartridgeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  const Text('Модель:'),
-                  Text(
-                    cartridge.model,
-                    style: const TextStyle(fontSize: 25),
-                  ),
-                ],
-              ),
-            ),
-            Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: cartridge.isDeleted ? Colors.red : Colors.transparent),
+        ),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
               children: [
-                const Text('Инв. номер:'),
-                Text(
-                  cartridge.inventoryNumber ?? '-',
-                  style: const TextStyle(fontSize: 25),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    width: 100,
+                    child: Column(
+                      children: [
+                        const Text('Модель:'),
+                        Wrap(
+                          children: [
+                            Text(
+                              cartridge.model,
+                              style: const TextStyle(fontSize: 25),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    const Text('Инв. номер:'),
+                    Text(
+                      cartridge.inventoryNumber ?? '-',
+                      style: const TextStyle(fontSize: 25),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 20),
+                if (cartridge.isInRepair)
+                  const Text(
+                    'В ремонте',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                    ),
+                  ),
+                if (cartridge.isReplaced)
+                  const Text(
+                    'В принтере',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.orangeAccent,
+                    ),
+                  ),
+                const Expanded(child: SizedBox()),
+                BlocBuilder<CartridgeCubit, CartridgeState>(
+                  builder: (context, state) {
+                    return Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (cartridge.isDeleted) {
+                              context
+                                  .read<CartridgeCubit>()
+                                  .restoreCartridge(cartridge.id)
+                                  .then((value) => context
+                                      .read<CartridgeCubit>()
+                                      .loadAllCartridges(
+                                          isDeleted: state.viewIsDeleted));
+                            } else {
+                              CartridgeDialogs.openDialog(
+                                context: context,
+                                cartridgeCubit: context.read<CartridgeCubit>(),
+                                cartridge: cartridge,
+                              );
+                            }
+                          },
+                          tooltip: cartridge.isDeleted
+                              ? 'Восстановить'
+                              : 'Редактировать',
+                          icon: Icon(
+                            cartridge.isDeleted
+                                ? Icons.restore
+                                : Icons.edit_note,
+                          ),
+                          color: cartridge.isDeleted
+                              ? Colors.blue
+                              : Colors.orangeAccent,
+                        ),
+                        const SizedBox(width: 10),
+                        if (!cartridge.isReplaced && !cartridge.isInRepair ||
+                            !cartridge.isDeleted)
+                          IconButton(
+                            tooltip: 'Удалить',
+                            onPressed: () async {
+                              await context
+                                  .read<CartridgeCubit>()
+                                  .deleteCartridge(cartridge.id)
+                                  .then((value) => context
+                                      .read<CartridgeCubit>()
+                                      .loadAllCartridges(
+                                          isDeleted: state.viewIsDeleted));
+                            },
+                            icon: const Icon(Icons.delete_outline),
+                            color: Colors.red,
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
-            const SizedBox(width: 20),
-            if (cartridge.isInRepair)
-              const Text(
-                'В ремонте',
-                style: TextStyle(fontSize: 20, color: Colors.red,),
-              ),
-            const Expanded(child: SizedBox()),
-            BlocBuilder<CartridgeCubit, CartridgeState>(
-              builder: (context, state) {
-                return Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        CartridgeDialogs.openDialog(
-                          context: context,
-                          cartridgeCubit: context.read<CartridgeCubit>(),
-                          cartridge: cartridge,
-                        );
-                      },
-                      icon: const Icon(Icons.edit_note),
-                      color: Colors.orangeAccent,
-                    ),
-                    const SizedBox(width: 20),
-                    IconButton(
-                      onPressed: () {
-                        context.read<CartridgeCubit>()
-                          ..deleteCartridge(cartridge.id)
-                          ..loadAllCartridges();
-                      },
-                      icon: const Icon(Icons.delete_outline),
-                      color: Colors.red,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

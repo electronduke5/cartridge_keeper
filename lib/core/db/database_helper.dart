@@ -93,25 +93,31 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> searchQuery(
     String table,
-    String searchingColumn,
+    List<String> searchingColumns,
     String searchingValue, {
     String? whereColumn,
     String? whereArg,
   }) async {
     Database db = await instance.database;
+
     if (whereColumn != null && whereArg?.isEmpty == false) {
       return await db.query(
         table,
         where:
-            '$whereColumn = $whereArg AND $searchingColumn LIKE \'%$searchingValue%\'',
+            '$whereColumn = $whereArg AND (${searchingColumns.map((column) => '$column LIKE \'%$searchingValue%\'').join(' OR ')})',
       );
     }
-    return await db.query(table,
-        where: '$searchingColumn LIKE \'%$searchingValue%\'');
+    return await db.query(
+      table,
+      where: searchingColumns
+          .map((column) => '$column LIKE \'%$searchingValue%\'')
+          .join(' AND '),
+    );
   }
+
   Future<List<Map<String, dynamic>>> searchQueryWithReference({
     required String table,
-    required String searchingColumn,
+    required List<String> searchingColumns,
     required String searchingValue,
     required List<String> referenceTables,
     required List<String> referenceColumns,
@@ -125,14 +131,13 @@ class DatabaseHelper {
         table: table,
         referenceTables: referenceTables,
         referenceColumns: referenceColumns,
-        searchingColumn: searchingColumn,
+        searchingColumns: searchingColumns,
         searchingValue: searchingValue,
         whereColumn: whereColumn,
         whereArg: whereArg,
       ),
     );
   }
-
 
   Future<Map<String, dynamic>> update(
       int id, Map<String, dynamic> data, String table) async {

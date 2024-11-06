@@ -20,7 +20,7 @@ class DatabaseSelectRequests {
 
   static String searchWithReference({
     required String table,
-    required String searchingColumn,
+    required List<String> searchingColumns,
     required String searchingValue,
     required List<String> referenceTables,
     required List<String> referenceColumns,
@@ -29,11 +29,11 @@ class DatabaseSelectRequests {
   }) {
     if (whereColumn != null) {
       final request =
-          'SELECT * FROM ${referenceTables.asMap().entries.map((refTable) => refTable.value)} join $table on ${referenceTables.asMap().entries.map((refTable) => '${refTable.value}.id = $table.${referenceColumns[refTable.key]}').join(' and ')} where $table.$searchingColumn = $searchingValue and $table.$whereColumn = $whereArg;';
+          'SELECT * FROM ${referenceTables.asMap().entries.map((refTable) => refTable.value)} join $table on ${referenceTables.asMap().entries.map((refTable) => '${refTable.value}.id = $table.${referenceColumns[refTable.key]}').join(' and ')} where ${searchingColumns.map((column)=> '$table.$column = $searchingValue').join(' and ')} and $table.$whereColumn = $whereArg;';
       return request;
     }
     final request =
-        'SELECT * FROM $table join ${referenceTables.asMap().entries.map((refTable) => '${refTable.value} on ${refTable.value}.id = $table.${referenceColumns[refTable.key]}').join(' join ')} where $table.$searchingColumn = $searchingValue;';
+        'SELECT * FROM $table join ${referenceTables.asMap().entries.map((refTable) => '${refTable.value} on ${refTable.value}.id = $table.${referenceColumns[refTable.key]}').join(' join ')} where ${searchingColumns.map((column)=> '$table.$column LIKE \'%$searchingValue%\'').join(' and ')};';
     return request;
   }
 }

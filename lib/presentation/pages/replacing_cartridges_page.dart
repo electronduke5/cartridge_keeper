@@ -101,8 +101,8 @@ class ReplacingCartridgesPage extends StatelessWidget {
                           final List<Office> listOffices =
                               state.getOfficesState.item!;
                           listOffices.sort(
-                            (a, b) => a.replacementDate.parseLocalDate
-                                .compareTo(b.replacementDate.parseLocalDate),
+                            (a, b) => b.replacementDate.parseLocalDate
+                                .compareTo(a.replacementDate.parseLocalDate),
                           );
                           return ReplacementCartridgeLayoutGrid(
                             crossAxisCount:

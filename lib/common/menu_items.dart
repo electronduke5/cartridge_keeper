@@ -15,7 +15,7 @@ class MenuItem {
     MenuItem(title: 'Принтеры', icon: Icons.print, route: '/printers'),
     MenuItem(title: 'Картриджи', icon: Icons.receipt, route: '/cartridges'),
     MenuItem(title: 'Ремонты', icon: Icons.gpp_maybe_outlined, route: '/repairs'),
-    MenuItem(title: 'Кабинеты', icon: Icons.door_back_door, route: '/replacing-cartridges'),
+    MenuItem(title: 'Замены', icon: Icons.door_back_door, route: '/replacing-cartridges'),
     MenuItem(title: 'Филиалы', icon: Icons.location_city, route: '/branches'),
   ];
 }

@@ -46,10 +46,27 @@ mixin DatabaseService<T extends Object> {
     required String table,
     required String searchingColumn,
     required String searchingValue,
+    List<String>? referenceTables,
+    List<String>? referenceColumns,
+    String? whereColumn,
+    String? whereArg,
   }) async {
     try {
+      if (referenceTables != null && referenceColumns != null) {
+        final response = await DatabaseHelper.instance.searchQueryWithReference(
+          table: table,
+          searchingColumn: searchingColumn,
+          searchingValue: searchingValue,
+          referenceTables: referenceTables,
+          referenceColumns: referenceColumns,
+          whereColumn: whereColumn,
+          whereArg: whereArg,
+        );
+        List<T> listT = response.map((element) => fromMap(element)).toList();
+        return Right(listT);
+      }
       final response = await DatabaseHelper.instance
-          .searchQuery(table, searchingColumn, searchingValue);
+          .searchQuery(table, searchingColumn, searchingValue, whereArg: whereArg, whereColumn: whereColumn);
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {

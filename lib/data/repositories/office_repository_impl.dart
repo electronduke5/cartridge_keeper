@@ -91,4 +91,20 @@ class OfficeRepositoryImpl
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, List<Office>>> getOfficesByDepartment(
+      int departmentId) async {
+    return await search(
+      referenceColumns: ['department_id', 'cartridge_id'],
+      referenceTables: [
+        DatabaseRequest.tableDepartments,
+        DatabaseRequest.tableCartridges,
+      ],
+      fromMap: (Map<String, dynamic> json) => Office.fromMap(json),
+      table: DatabaseRequest.tableOffices,
+      searchingColumn: 'department_id',
+      searchingValue: departmentId.toString(),
+    );
+  }
 }

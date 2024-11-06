@@ -29,6 +29,7 @@ class ReplacementCartridgeWidget extends StatelessWidget {
                 BlocBuilder<OfficeCubit, OfficeState>(
                   builder: (context, state) {
                     return IconButton(
+                      color: Colors.red,
                       onPressed: () {
                         context.read<OfficeCubit>()
                           ..deleteOffice(office.id)
@@ -39,7 +40,6 @@ class ReplacementCartridgeWidget extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.delete_outline,
-                        color: Colors.red,
                       ),
                     );
                   },

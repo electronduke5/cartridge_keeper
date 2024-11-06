@@ -6,6 +6,7 @@ import 'package:cartridge_keeper/presentation/pages/repairs_page.dart';
 import 'package:cartridge_keeper/presentation/pages/replacing_cartridges_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart';
 
 import '../presentation/cubits/cartridge_cubit/cartridge_cubit.dart';
 import '../presentation/pages/cartridges_page.dart';
@@ -72,10 +73,10 @@ class NavigationService {
                 create: (_) => DepartmentCubit(),
               ),
               BlocProvider(
-                create: (_) => OfficeCubit()..loadAllOffices(),
+                create: (_) => OfficeCubit(),
               ),
             ],
-            child: const ReplacingCartridgesPage(),
+            child:  ReplacingCartridgesPage(),
           ),
         );
       default:

@@ -99,14 +99,40 @@ class DatabaseHelper {
     String? whereArg,
   }) async {
     Database db = await instance.database;
-    if (whereColumn != null) {
-      return await db.query(table,
-          where:
-              '$searchingColumn = $whereArg  AND $whereColumn = ? LIKE \'%$searchingValue%\'');
+    if (whereColumn != null && whereArg?.isEmpty == false) {
+      return await db.query(
+        table,
+        where:
+            '$whereColumn = $whereArg AND $searchingColumn LIKE \'%$searchingValue%\'',
+      );
     }
     return await db.query(table,
         where: '$searchingColumn LIKE \'%$searchingValue%\'');
   }
+  Future<List<Map<String, dynamic>>> searchQueryWithReference({
+    required String table,
+    required String searchingColumn,
+    required String searchingValue,
+    required List<String> referenceTables,
+    required List<String> referenceColumns,
+    String? whereColumn,
+    String? whereArg,
+  }) async {
+    Database db = await instance.database;
+
+    return await db.rawQuery(
+      DatabaseSelectRequests.searchWithReference(
+        table: table,
+        referenceTables: referenceTables,
+        referenceColumns: referenceColumns,
+        searchingColumn: searchingColumn,
+        searchingValue: searchingValue,
+        whereColumn: whereColumn,
+        whereArg: whereArg,
+      ),
+    );
+  }
+
 
   Future<Map<String, dynamic>> update(
       int id, Map<String, dynamic> data, String table) async {

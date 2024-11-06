@@ -7,6 +7,7 @@ import '../../common/failure.dart';
 
 abstract class OfficeRepository {
   Future<Either<Failure,List<Office>>> getAllOffices();
+  Future<Either<Failure,List<Office>>> getOfficesByDepartment(int departmentId);
 
   Future<Either<Failure, Office>> createOffice({
     String officeNumber,

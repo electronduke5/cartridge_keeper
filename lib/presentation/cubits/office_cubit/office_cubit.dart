@@ -36,6 +36,17 @@ class OfficeCubit extends Cubit<OfficeState> {
     } catch (e) {}
   }
 
+  Future<void> filterByDepartment(int id) async {
+    emit(state.copyWith(getOfficesState: LoadingState()));
+
+    await _repository.getOfficesByDepartment(id).then(
+      (result) => result.fold(
+        (l) => emit(state.copyWith(getOfficesState: FailedState(l.error))),
+        (r) => emit(state.copyWith(getOfficesState: LoadedState(r))),
+      ),
+    );
+  }
+
   Future<void> changeCartridge(Cartridge? cartridge) async {
     emit(state.copyWith(changedCartridge: cartridge));
   }

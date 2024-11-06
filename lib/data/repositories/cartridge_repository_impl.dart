@@ -101,6 +101,8 @@ class CartridgeRepositoryImpl
   Future<Either<Failure, List<Cartridge>>> searchCartridges(
       String searchValue) async {
     final cartridges = await search(
+      whereColumn: 'is_deleted',
+      whereArg: '0',
       searchingColumn: 'inventory_number',
       searchingValue: searchValue,
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),

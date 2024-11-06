@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/core/navigation_service.dart';
 import 'package:cartridge_keeper/presentation/cubits/menu_cubit/menu_cubit.dart';
+import 'package:cartridge_keeper/presentation/widgets/snack_bar_info.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common/menu_items.dart';
+import '../../core/db/database_helper.dart';
 
 class MenuWidget extends StatefulWidget {
   const MenuWidget({super.key});
@@ -59,11 +65,16 @@ class _MenuWidgetState extends State<MenuWidget> {
                               title: Text(MenuItem.menuItems[index].title),
                               leading: Icon(MenuItem.menuItems[index].icon),
                               selected: state.selectedIndex == index,
-                              onTap: () {
-                                context.read<MenuCubit>().changeIndex(index);
-                                NavigationService.navigateTo(
-                                  MenuItem.menuItems[index].route,
-                                );
+                              onTap: () async {
+                                ///Если выбран последний пункт меню, то экспортируем базу данных
+                                if (index == MenuItem.menuItems.length - 1) {
+                                  await exportDatabase(context);
+                                } else {
+                                  context.read<MenuCubit>().changeIndex(index);
+                                  NavigationService.navigateTo(
+                                    MenuItem.menuItems[index].route,
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -78,5 +89,31 @@ class _MenuWidgetState extends State<MenuWidget> {
         ],
       ),
     );
+  }
+
+  exportDatabase(BuildContext context) async {
+    File dbFile = await DatabaseHelper.instance.dbToCopy();
+
+    String? outputFile = await FilePicker.platform.saveFile(
+      lockParentWindow: true,
+      dialogTitle: 'Выберите папку для сохранения',
+      fileName: 'cartridge_keeper_db_copy_${DateTime.now().toLocalFormat}.db',
+      type: FileType.custom,
+      allowedExtensions: ['db'],
+    );
+    if (outputFile != null && !outputFile.endsWith('.db')) {
+      outputFile += '.db';
+    }
+
+    try {
+      File file = File(outputFile!);
+      await file.writeAsBytes(await dbFile.readAsBytes()).then(
+            (value) => SnackBarInfo.show(
+              context: context,
+              message: 'База данных успешно экспортирована',
+              isSuccess: true,
+            ),
+          );
+    } catch (e) {}
   }
 }

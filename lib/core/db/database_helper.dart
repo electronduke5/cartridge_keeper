@@ -207,4 +207,8 @@ class DatabaseHelper {
     }
     await onInitTable(db);
   }
+
+  Future<File> dbToCopy() async {
+    return File(_pathDB!);
+  }
 }

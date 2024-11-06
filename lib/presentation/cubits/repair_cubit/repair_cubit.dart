@@ -24,6 +24,7 @@ class RepairCubit extends Cubit<RepairState> {
 
     pdf.addPage(await RepairsPdf.repairsPage(list));
     String? outputFile = await FilePicker.platform.saveFile(
+      lockParentWindow: true,
       dialogTitle: 'Выберите папку для сохранения',
       fileName: 'Отчёт по ремонтам картриджей ${DateTime.now().toLocalFormat}.pdf',
       type: FileType.custom,

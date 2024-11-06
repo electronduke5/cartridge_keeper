@@ -25,6 +25,7 @@ class OfficeCubit extends Cubit<OfficeState> {
 
     pdf.addPage(await ReplacementPdf.replacementPage(list));
     String? outputFile = await FilePicker.platform.saveFile(
+      lockParentWindow: true,
       dialogTitle: 'Выберите папку для сохранения',
       fileName: 'Отчёт по заменам картриджей ${DateTime.now().toLocalFormat}.pdf',
       type: FileType.custom,

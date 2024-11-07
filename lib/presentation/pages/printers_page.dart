@@ -35,23 +35,7 @@ class PrintersPage extends StatelessWidget {
                             ),
                           ),
                           const Divider(),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0),
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('ID'),
-                                    Text('Марка'),
-                                    Text('Модель'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          const SizedBox(height: 10),
                           Expanded(
                             child: SizedBox.expand(
                               child: SingleChildScrollView(

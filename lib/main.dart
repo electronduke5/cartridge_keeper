@@ -15,7 +15,7 @@ void main() {
   AppModule().provideDependencies();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     //set min size window
-    WindowManager.instance.setMinimumSize(const Size(600, 500));
+    WindowManager.instance.setMinimumSize(const Size(750, 500));
   }
   runApp(const MyApp());
 }

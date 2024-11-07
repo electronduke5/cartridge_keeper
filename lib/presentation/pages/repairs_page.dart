@@ -54,8 +54,8 @@ class RepairsPage extends StatelessWidget {
                                 final List<Repair> listRepairs =
                                     state.getRepairsState.item!;
                                 listRepairs.sort(
-                                  (a, b) => a.startDate.parseLocalDate
-                                      .compareTo(b.startDate.parseLocalDate),
+                                  (a, b) => b.startDate.parseLocalDate
+                                      .compareTo(a.startDate.parseLocalDate),
                                 );
 
                                 final repair = listRepairs[index];

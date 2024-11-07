@@ -54,8 +54,8 @@ class ReplacingCartridgesPage extends StatelessWidget {
         children: [
           IntrinsicHeight(
             child: SizedBox.expand(
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
+              child: Row(
+                //alignment: WrapAlignment.spaceBetween,
                 children: [
                   const Text(
                     'Замена картриджей',

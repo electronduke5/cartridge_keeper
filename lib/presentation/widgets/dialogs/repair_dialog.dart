@@ -6,6 +6,7 @@ import '../../../data/models/cartridge.dart';
 import '../../../data/models/repair.dart';
 import '../../cubits/cartridge_cubit/cartridge_cubit.dart';
 import '../../cubits/repair_cubit/repair_cubit.dart';
+import '../cartridges_dropdown.dart';
 import '../end_date_form_field.dart';
 import '../start_date_form_field.dart';
 
@@ -64,24 +65,9 @@ class RepairDialogs {
                                 return const Center(
                                     child: Text('Сначала добавьте картридж'));
                               } else {
-                                return DropdownButtonFormField<Cartridge?>(
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return 'Выберите картридж';
-                                    }
-                                    return null;
-                                  },
-                                  value: repair?.cartridge,
-                                  items: state.getCartridgesState.item!
-                                      .map((e) => DropdownMenuItem(
-                                            value: e,
-                                            child: Text(
-                                                'Инв. №: ${e.inventoryNumber}\n${e.model}'),
-                                          ))
-                                      .toList(),
-                                  onChanged: (Cartridge? cartridge) {
-                                    repairCubit.changedCartridge(cartridge);
-                                  },
+                                return CartridgesDropdown(
+                                  cartridges: state.getCartridgesState.item!,
+                                  repairCubit: repairCubit,
                                 );
                               }
                             },

@@ -4,9 +4,9 @@ import 'package:cartridge_keeper/presentation/widgets/start_date_form_field.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/cartridge.dart';
 import '../../../data/models/department.dart';
 import '../../cubits/office_cubit/office_cubit.dart';
+import '../cartridges_dropdown.dart';
 
 class ReplacementCartridgeDialog {
   static final _formKey = GlobalKey<FormState>();
@@ -26,9 +26,9 @@ class ReplacementCartridgeDialog {
         context: context,
         builder: (context) {
           return BlocProvider.value(
-            value: officeCubit,
+            value: cartridgeCubit,
             child: BlocProvider.value(
-              value: cartridgeCubit,
+              value: officeCubit,
               child: AlertDialog(
                 title: const Text('Добавить замену картриджа'),
                 content: Form(
@@ -64,6 +64,7 @@ class ReplacementCartridgeDialog {
                         child: Text('Подразделение'),
                       ),
                       DropdownButtonFormField<Department?>(
+                        dropdownColor: Theme.of(context).cardTheme.color,
                         items: departments
                             .map(
                               (department) => DropdownMenuItem(
@@ -86,28 +87,28 @@ class ReplacementCartridgeDialog {
                         padding: EdgeInsets.only(top: 10, bottom: 5),
                         child: Text('Картридж'),
                       ),
-                      BlocBuilder<CartridgeCubit, CartridgeState>(
-                        builder: (context, state) {
-                          return DropdownButtonFormField<Cartridge?>(
-                            items: state.getCartridgesState.item!
-                                .map(
-                                  (cartridge) => DropdownMenuItem(
-                                    value: cartridge,
-                                    child: Text(
-                                        'Инв. №: ${cartridge.inventoryNumber}\n${cartridge.model}'),
-                                  ),
-                                )
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Выберите картридж';
-                              }
-                              return null;
-                            },
-                            onChanged: (Cartridge? cartridge) {
-                              officeCubit.changeCartridge(cartridge!);
-                            },
-                          );
+                      FutureBuilder(
+                        future: Future.wait([
+                          cartridgeCubit.loadOnlyAvailableCartridges(
+                              isIncludingReplacement: true)
+                        ]),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return const Center(
+                                child: Text('Ошибка при получении картриджей'));
+                          } else {
+                            return BlocBuilder<CartridgeCubit, CartridgeState>(
+                              builder: (context, state) {
+                                return CartridgesDropdown(
+                                    cartridges: state.getCartridgesState.item!,
+                                    officeCubit: officeCubit);
+                              },
+                            );
+                          }
                         },
                       ),
                     ],

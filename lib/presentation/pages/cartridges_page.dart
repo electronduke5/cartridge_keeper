@@ -21,6 +21,7 @@ class CartridgesPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
                 'Картриджи',
@@ -28,6 +29,19 @@ class CartridgesPage extends StatelessWidget {
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              const SizedBox(width: 10),
+              BlocBuilder<CartridgeCubit, CartridgeState>(
+                builder: (context, state) {
+                  return Text(
+                    '(${state.getCartridgesState.item?.length.toString() ?? '?'} шт.)',
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
               ),
               const Spacer(),
               const Column(

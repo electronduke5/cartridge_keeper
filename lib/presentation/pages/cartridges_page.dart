@@ -86,6 +86,8 @@ class CartridgesPage extends StatelessWidget {
                       } else {
                         return ListView.builder(
                           itemBuilder: (context, index) {
+                            state.getCartridgesState.item!.sort((a, b) =>
+                                a.model.compareTo(b.model));
                             final cartridge =
                                 state.getCartridgesState.item![index];
                             return CartridgeWidget(cartridge: cartridge);

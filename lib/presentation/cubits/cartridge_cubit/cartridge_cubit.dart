@@ -15,10 +15,26 @@ class CartridgeCubit extends Cubit<CartridgeState> {
     emit(state.copyWith(viewIsDeleted: isDeleted ?? !state.viewIsDeleted));
   }
 
-  Future<void> loadAllCartridges({bool isDeleted = false}) async {
+  Future<void> changeRepairedCartridgesVisibility({bool? isRepaired}) async {
+    emit(state.copyWith(viewIsRepaired: isRepaired ?? !state.viewIsRepaired));
+  }
+
+  Future<void> changeReplacementCartridgesVisibility(
+      {bool? isReplacement}) async {
+    emit(state.copyWith(
+        viewIsReplacement: isReplacement ?? !state.viewIsReplacement));
+  }
+
+  Future<void> loadAllCartridges(
+      {bool? isDeleted, bool? isReplaced, bool? isRepaired}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
-    await _repository.getAllCartridges(isDeleted: isDeleted).then(
+    await _repository
+        .getAllCartridges(
+            isDeleted: isDeleted,
+            isReplaced: isReplaced,
+            isRepaired: isRepaired)
+        .then(
           (result) => result.fold(
             (l) => emit(
                 state.copyWith(getCartridgesState: ModelState.failed(l.error))),
@@ -89,7 +105,8 @@ class CartridgeCubit extends Cubit<CartridgeState> {
         );
   }
 
-  Future<void> searchCartridge(String searchString, {bool isDeleted = false}) async {
+  Future<void> searchCartridge(String searchString,
+      {bool isDeleted = false}) async {
     emit(state.copyWith(getCartridgesState: ModelState.loading()));
 
     await _repository.searchCartridges(searchString, isDeleted: isDeleted).then(

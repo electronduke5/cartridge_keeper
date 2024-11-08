@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/cartridge.dart';
 import '../cubits/model_state.dart';
-import '../widgets/deleted_cartridges_checkbox.dart';
+import '../widgets/cartridge_filter_dropdown.dart';
 
 class CartridgesPage extends StatelessWidget {
   const CartridgesPage({super.key});
@@ -44,12 +44,7 @@ class CartridgesPage extends StatelessWidget {
                 },
               ),
               const Spacer(),
-              const Column(
-                children: [
-                  Text('Удалённые картриджи'),
-                  DeletedCartridgesCheckbox(),
-                ],
-              ),
+              const CartridgeFilterDropdown(),
               const SizedBox(width: 20),
               IntrinsicWidth(
                 child: BlocBuilder<CartridgeCubit, CartridgeState>(
@@ -86,8 +81,8 @@ class CartridgesPage extends StatelessWidget {
                       } else {
                         return ListView.builder(
                           itemBuilder: (context, index) {
-                            state.getCartridgesState.item!.sort((a, b) =>
-                                a.model.compareTo(b.model));
+                            state.getCartridgesState.item!
+                                .sort((a, b) => a.model.compareTo(b.model));
                             final cartridge =
                                 state.getCartridgesState.item![index];
                             return CartridgeWidget(cartridge: cartridge);

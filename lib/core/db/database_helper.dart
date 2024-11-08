@@ -50,14 +50,15 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> queryAllRows(
     String table, {
-    String? whereColumn,
-    dynamic whereArg,
+    Map<String, dynamic>? whereItems,
   }) async {
     Database db = await instance.database;
-    if (whereColumn == null) {
+    if (whereItems == null || whereItems.isEmpty) {
       return await db.query(table);
     }
-    return await db.query(table, where: '$whereColumn = $whereArg');
+    return await db.query(table,
+        where: whereItems.keys.map((key) => '$key = ?').join(' AND '),
+        whereArgs: whereItems.values.toList());
   }
 
   Future<List<Map<String, dynamic>>> queryAllRowsWithReference({
@@ -177,9 +178,7 @@ class DatabaseHelper {
           Printer(mark: printer.mark, model: printer.model).toMap(),
         );
       }
-    } on DatabaseException catch (error) {
-      print(error.result);
-    }
+    } on DatabaseException {}
   }
 
   static Future _onConfigure(Database db) async {

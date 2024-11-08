@@ -41,7 +41,6 @@ class CartridgeRepositoryImpl
         table: DatabaseRequest.tableCartridges,
       );
       return resultDelete.fold((l) => Left(l), (r) {
-        print('Удалено навсегда');
         return Right(cartridge);
       });
     }
@@ -57,13 +56,19 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<Cartridge>>> getAllCartridges(
-      {bool isDeleted = false}) async {
+  Future<Either<Failure, List<Cartridge>>> getAllCartridges({
+    bool? isDeleted = false,
+    bool? isReplaced = true,
+    bool? isRepaired = true,
+  }) async {
     final cartridges = await getAll(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),
       table: DatabaseRequest.tableCartridges,
-      whereColumn: 'is_deleted',
-      whereArg: isDeleted ? 1 : 0,
+      whereItems: {
+        if (isDeleted != null) 'is_deleted': isDeleted ? '1' : '0',
+        if (isReplaced != null) 'is_replaced': isReplaced ? '1' : '0',
+        if (isRepaired != null) 'is_in_repair': isRepaired ? '1' : '0',
+      },
     );
     return cartridges.fold(
       (l) => Left(l),
@@ -116,8 +121,8 @@ class CartridgeRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<Cartridge>>> searchCartridges(
-      String searchValue, {bool isDeleted = false}) async {
+  Future<Either<Failure, List<Cartridge>>> searchCartridges(String searchValue,
+      {bool isDeleted = false}) async {
     final cartridges = await search(
       whereColumn: 'is_deleted',
       whereArg: isDeleted ? '1' : '0',

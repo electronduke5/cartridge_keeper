@@ -7,14 +7,17 @@ mixin DatabaseService<T extends Object> {
   Future<Either<Failure, List<T>>> getAll({
     required T Function(Map<String, dynamic>) fromMap,
     required String table,
-    String? whereColumn,
-    dynamic whereArg,
+    Map<String, dynamic>? whereItems,
   }) async {
     try {
+      if (whereItems == null) {
+        final response = await DatabaseHelper.instance.queryAllRows(table);
+        List<T> listT = response.map((element) => fromMap(element)).toList();
+        return Right(listT);
+      }
       final response = await DatabaseHelper.instance.queryAllRows(
         table,
-        whereColumn: whereColumn,
-        whereArg: whereArg,
+        whereItems: whereItems.map((key, value) => MapEntry(key, value)),
       );
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
@@ -65,8 +68,9 @@ mixin DatabaseService<T extends Object> {
         List<T> listT = response.map((element) => fromMap(element)).toList();
         return Right(listT);
       }
-      final response = await DatabaseHelper.instance
-          .searchQuery(table, searchingColumns, searchingValue, whereArg: whereArg, whereColumn: whereColumn);
+      final response = await DatabaseHelper.instance.searchQuery(
+          table, searchingColumns, searchingValue,
+          whereArg: whereArg, whereColumn: whereColumn);
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {
@@ -110,7 +114,7 @@ mixin DatabaseService<T extends Object> {
       final response = await DatabaseHelper.instance.insert(data, table);
       return Right(fromMap(response));
     } on DatabaseException catch (error) {
-      print('DB ERROR: $error');
+      //print('DB ERROR: $error');
       //print('ERROR Result code: ${error.getResultCode()}');
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }

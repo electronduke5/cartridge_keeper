@@ -40,7 +40,11 @@ class NavigationService {
           viewToShow: MultiBlocProvider(
             providers: [
               BlocProvider(
-                  create: (_) => CartridgeCubit()..loadAllCartridges()),
+                  create: (_) => CartridgeCubit()
+                    ..loadAllCartridges(
+                        isRepaired: false,
+                        isReplaced: false,
+                        isDeleted: false)),
             ],
             child: const CartridgesPage(),
           ),
@@ -75,7 +79,7 @@ class NavigationService {
                 create: (_) => OfficeCubit(),
               ),
             ],
-            child:  ReplacingCartridgesPage(),
+            child: const ReplacingCartridgesPage(),
           ),
         );
       default:

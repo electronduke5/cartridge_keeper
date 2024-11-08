@@ -58,8 +58,8 @@ class CartridgeRepositoryImpl
   @override
   Future<Either<Failure, List<Cartridge>>> getAllCartridges({
     bool? isDeleted = false,
-    bool? isReplaced = true,
-    bool? isRepaired = true,
+    bool? isReplaced,
+    bool? isRepaired,
   }) async {
     final cartridges = await getAll(
       fromMap: (Map<String, dynamic> json) => Cartridge.fromMap(json),

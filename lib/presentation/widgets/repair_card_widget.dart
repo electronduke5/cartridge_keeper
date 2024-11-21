@@ -31,6 +31,16 @@ class RepairCardWidget extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             Column(
+              children: [
+                const Text('Модель:'),
+                Text(
+                  repair.cartridge.model.toString(),
+                  style: const TextStyle(fontSize: 25),
+                ),
+              ],
+            ),
+            const SizedBox(width: 20),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Дата отправки: ${repair.startDate}'),

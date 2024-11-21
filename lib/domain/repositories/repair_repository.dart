@@ -6,6 +6,7 @@ import '../../data/models/cartridge.dart';
 
 abstract class RepairRepository {
   Future<Either<Failure,List<Repair>>> getAllRepairs();
+  Future<Either<Failure,List<Repair>>> getAllRepairsByCartridge(int cartridgeId);
 
   Future<Either<Failure,String>> deleteRepair(int id);
 

@@ -65,13 +65,18 @@ class DatabaseHelper {
     required String table,
     required List<String> referenceTables,
     required List<String> referenceColumns,
+    String? whereColumn,
+    String? whereArg,
   }) async {
     Database db = await instance.database;
+    if (whereColumn != null && whereArg?.isEmpty == false) {}
     return await db.rawQuery(
       DatabaseSelectRequests.selectAllWithReference(
-        table,
-        referenceTables,
-        referenceColumns,
+        table: table,
+        referenceTables: referenceTables,
+        referenceColumns: referenceColumns,
+        whereColumn: whereColumn,
+        whereArg: whereArg,
       ),
     );
   }

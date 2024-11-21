@@ -6,9 +6,11 @@ import '../cubits/cartridge_cubit/cartridge_cubit.dart';
 import '../cubits/office_cubit/office_cubit.dart';
 
 class ReplacementCartridgeWidget extends StatelessWidget {
-  const ReplacementCartridgeWidget({super.key, required this.office});
+  const ReplacementCartridgeWidget(
+      {super.key, required this.office, this.isShowActionButtons = true});
 
   final Office office;
+  final bool isShowActionButtons;
 
   @override
   Widget build(BuildContext context) {
@@ -26,25 +28,26 @@ class ReplacementCartridgeWidget extends StatelessWidget {
                   office.department.name,
                   style: const TextStyle(fontSize: 15),
                 ),
-                BlocBuilder<OfficeCubit, OfficeState>(
-                  builder: (context, state) {
-                    return IconButton(
-                      tooltip: 'Удалить',
-                      color: Colors.red,
-                      onPressed: () {
-                        context.read<OfficeCubit>()
-                          ..deleteOffice(office.id)
-                          ..loadAllOffices();
-                        context
-                            .read<CartridgeCubit>()
-                            .returnFromReplacement(office.cartridge.id);
-                      },
-                      icon: const Icon(
-                        Icons.delete_outline,
-                      ),
-                    );
-                  },
-                ),
+                if (isShowActionButtons)
+                  BlocBuilder<OfficeCubit, OfficeState>(
+                    builder: (context, state) {
+                      return IconButton(
+                        tooltip: 'Удалить',
+                        color: Colors.red,
+                        onPressed: () {
+                          context.read<OfficeCubit>()
+                            ..deleteOffice(office.id)
+                            ..loadAllOffices();
+                          context
+                              .read<CartridgeCubit>()
+                              .returnFromReplacement(office.cartridge.id);
+                        },
+                        icon: const Icon(
+                          Icons.delete_outline,
+                        ),
+                      );
+                    },
+                  ),
               ],
             ),
             Padding(

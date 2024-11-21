@@ -59,6 +59,25 @@ class RepairCubit extends Cubit<RepairState> {
         );
   }
 
+  Future<void> loadAllRepairsByCartridge(int cartridgeId) async {
+    emit(state.copyWith(getRepairsState: ModelState.loading()));
+
+    await _repository.getAllRepairsByCartridge(cartridgeId).then(
+          (result) => result.fold(
+            (l) => emit(
+          state.copyWith(
+            getRepairsState: ModelState.failed(l.error),
+          ),
+        ),
+            (r) => emit(
+          state.copyWith(
+            getRepairsState: ModelState.loaded(r),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future deleteRepair(int id) async {
     emit(state.copyWith(deleteRepairState: ModelState.loading()));
 

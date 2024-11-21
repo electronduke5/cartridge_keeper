@@ -74,6 +74,24 @@ class OfficeCubit extends Cubit<OfficeState> {
           ),
         );
   }
+  Future<void> loadAllOfficesByCartridge(int cartridgeId) async {
+    emit(state.copyWith(getOfficesState: ModelState.loading()));
+
+    await _repository.getOfficesByCartridge(cartridgeId).then(
+          (result) => result.fold(
+            (l) => emit(
+          state.copyWith(
+            getOfficesState: ModelState.failed(l.error),
+          ),
+        ),
+            (r) => emit(
+          state.copyWith(
+            getOfficesState: ModelState.loaded(r),
+          ),
+        ),
+      ),
+    );
+  }
 
   Future<void> addOffice({
     String? officeNumber,

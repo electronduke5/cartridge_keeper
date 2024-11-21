@@ -81,4 +81,17 @@ class RepairRepositoryImpl
         await deleteObject(table: DatabaseRequest.tableRepairs, id: id);
     return resultDelete.fold((l) => Left(l), (r) => Right(r));
   }
+
+  @override
+  Future<Either<Failure, List<Repair>>> getAllRepairsByCartridge(
+      int cartridgeId) async {
+    return await getAllWithReference(
+      referenceTables: [DatabaseRequest.tableCartridges],
+      referenceColumns: ['cartridge_id'],
+      fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
+      table: DatabaseRequest.tableRepairs,
+      whereColumn: 'cartridge_id',
+      whereArg: cartridgeId.toString(),
+    );
+  }
 }

@@ -95,7 +95,7 @@ class OfficeRepositoryImpl
   @override
   Future<Either<Failure, List<Office>>> getOfficesByDepartment(
       int departmentId) async {
-    return await search(
+    return await getAllWithReference(
       referenceColumns: ['department_id', 'cartridge_id'],
       referenceTables: [
         DatabaseRequest.tableDepartments,
@@ -103,8 +103,24 @@ class OfficeRepositoryImpl
       ],
       fromMap: (Map<String, dynamic> json) => Office.fromMap(json),
       table: DatabaseRequest.tableOffices,
-      searchingColumns: ['department_id'],
-      searchingValue: departmentId.toString(),
+      whereColumn: 'department_id',
+      whereArg: departmentId.toString(),
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<Office>>> getOfficesByCartridge(
+      int cartridgeId) async {
+    return await getAllWithReference(
+      referenceColumns: ['department_id', 'cartridge_id'],
+      referenceTables: [
+        DatabaseRequest.tableDepartments,
+        DatabaseRequest.tableCartridges,
+      ],
+      fromMap: (Map<String, dynamic> json) => Office.fromMap(json),
+      table: DatabaseRequest.tableOffices,
+      whereColumn: 'cartridge_id',
+      whereArg: cartridgeId.toString(),
     );
   }
 }

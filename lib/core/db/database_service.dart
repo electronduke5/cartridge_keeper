@@ -31,12 +31,17 @@ mixin DatabaseService<T extends Object> {
     required String table,
     required List<String> referenceTables,
     required List<String> referenceColumns,
+    String? whereColumn,
+    String? whereArg,
   }) async {
     try {
       final response = await DatabaseHelper.instance.queryAllRowsWithReference(
-          table: table,
-          referenceTables: referenceTables,
-          referenceColumns: referenceColumns);
+        table: table,
+        referenceTables: referenceTables,
+        referenceColumns: referenceColumns,
+        whereColumn: whereColumn,
+        whereArg: whereArg,
+      );
       List<T> listT = response.map((element) => fromMap(element)).toList();
       return Right(listT);
     } on DatabaseException catch (error) {

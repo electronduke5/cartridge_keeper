@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFFF5F6FA),
         useMaterial3: true,
       ),
-      initialRoute: '/printers',
+      initialRoute: '/cartridges',
       onGenerateRoute: (settings) => NavigationService.generateRoute(settings),
       builder: (context, child) => MultiBlocProvider(
         providers: [

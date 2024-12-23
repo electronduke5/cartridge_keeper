@@ -45,7 +45,7 @@ class CartridgesDropdown extends StatelessWidget {
       popupProps: PopupProps.menu(
         showSearchBox: true,
         menuProps: MenuProps(
-          barrierColor: Colors.black.withOpacity(0.5),
+          barrierColor: Colors.black.withValues(alpha: 0.5),
           backgroundColor: Theme.of(context).cardTheme.color,
         ),
         searchFieldProps: TextFieldProps(
@@ -69,7 +69,7 @@ class CartridgesDropdown extends StatelessWidget {
               'Инв. №: ${item.$2.inventoryNumber}\n${item.$2.model} ${item.$2.isReplaced ? '(в принтере)' : ''}',
               style: TextStyle(
                   color: item.$2.isReplaced
-                      ? Colors.orangeAccent.withOpacity(0.5)
+                      ? Colors.orangeAccent.withValues(alpha: 0.5)
                       : Colors.white),
             ),
           );

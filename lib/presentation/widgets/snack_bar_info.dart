@@ -15,8 +15,8 @@ class SnackBarInfo {
         ),
       ),
       backgroundColor: isSuccess
-          ? const Color(0xFF00B69B).withOpacity(0.1)
-          : const Color(0xFFEF3826).withOpacity(0.1),
+          ? const Color(0xFF00B69B).withValues(alpha: 0.1)
+          : const Color(0xFFEF3826).withValues(alpha: 0.1),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

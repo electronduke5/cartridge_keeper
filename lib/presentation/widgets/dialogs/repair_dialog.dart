@@ -78,7 +78,7 @@ class RepairDialogs {
                               borderRadius: BorderRadius.circular(10),
                               side: BorderSide(
                                 style: BorderStyle.solid,
-                                color: const Color(0xFF4880FF).withOpacity(0.6),
+                                color: const Color(0xFF4880FF).withValues(alpha: 0.6),
                                 width: 2.0,
                               ),
                             ),

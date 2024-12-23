@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: const Color(0xFF4880FF).withOpacity(0.6),
+              color: const Color(0xFF4880FF).withValues(alpha: 0.6),
               width: 2,
             ),
           ),
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: const Color(0xFF4880FF).withOpacity(0.2),
+              color: const Color(0xFF4880FF).withValues(alpha: 0.2),
             ),
           ),
         ),

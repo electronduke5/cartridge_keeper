@@ -20,14 +20,19 @@ class OfficeCubit extends Cubit<OfficeState> {
 
   final _repository = AppModule.getOfficeRepository();
 
-  Future<void> createPDF(List<Office> list) async {
+  Future<void> createPDF({
+    required List<Office> list,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
     final pdf = pw.Document();
 
-    pdf.addPage(await ReplacementPdf.replacementPage(list));
+    pdf.addPage(await ReplacementPdf.replacementPage(list, startDate, endDate));
     String? outputFile = await FilePicker.platform.saveFile(
       lockParentWindow: true,
       dialogTitle: 'Выберите папку для сохранения',
-      fileName: 'Отчёт по заменам картриджей ${DateTime.now().toLocalFormat}.pdf',
+      fileName:
+          'Отчёт по заменам картриджей (${startDate.toLocalFormat} - ${endDate.toLocalFormat}).pdf',
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
@@ -41,11 +46,11 @@ class OfficeCubit extends Cubit<OfficeState> {
     emit(state.copyWith(getOfficesState: LoadingState()));
 
     await _repository.getOfficesByDepartment(id).then(
-      (result) => result.fold(
-        (l) => emit(state.copyWith(getOfficesState: FailedState(l.error))),
-        (r) => emit(state.copyWith(getOfficesState: LoadedState(r))),
-      ),
-    );
+          (result) => result.fold(
+            (l) => emit(state.copyWith(getOfficesState: FailedState(l.error))),
+            (r) => emit(state.copyWith(getOfficesState: LoadedState(r))),
+          ),
+        );
   }
 
   Future<void> changeCartridge(Cartridge? cartridge) async {
@@ -74,23 +79,24 @@ class OfficeCubit extends Cubit<OfficeState> {
           ),
         );
   }
+
   Future<void> loadAllOfficesByCartridge(int cartridgeId) async {
     emit(state.copyWith(getOfficesState: ModelState.loading()));
 
     await _repository.getOfficesByCartridge(cartridgeId).then(
           (result) => result.fold(
             (l) => emit(
-          state.copyWith(
-            getOfficesState: ModelState.failed(l.error),
-          ),
-        ),
+              state.copyWith(
+                getOfficesState: ModelState.failed(l.error),
+              ),
+            ),
             (r) => emit(
-          state.copyWith(
-            getOfficesState: ModelState.loaded(r),
+              state.copyWith(
+                getOfficesState: ModelState.loaded(r),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Future<void> addOffice({

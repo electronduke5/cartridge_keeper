@@ -72,6 +72,14 @@ class MyApp extends StatelessWidget {
             foregroundColor: Colors.white,
           ),
         ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
         listTileTheme: const ListTileThemeData(
           selectedTileColor: Color(0xFF4880FF),
           selectedColor: Colors.white,

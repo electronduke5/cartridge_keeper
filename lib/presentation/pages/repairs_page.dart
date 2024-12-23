@@ -2,6 +2,7 @@ import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/data/models/repair.dart';
 import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
 import 'package:cartridge_keeper/presentation/cubits/repair_cubit/repair_cubit.dart';
+import 'package:cartridge_keeper/presentation/widgets/dialogs/pdf_dialog.dart';
 import 'package:cartridge_keeper/presentation/widgets/dialogs/repair_dialog.dart';
 import 'package:cartridge_keeper/presentation/widgets/repair_card_widget.dart';
 import 'package:flutter/material.dart';
@@ -153,10 +154,23 @@ class RepairsPage extends StatelessWidget {
                 BlocBuilder<RepairCubit, RepairState>(
                   builder: (context, state) {
                     return ElevatedButton.icon(
-                      onPressed: () async {
-                        await context
-                            .read<RepairCubit>()
-                            .creatingPDF(state.getRepairsState.item!);
+                      onPressed: () {
+                        final List<Repair>? sortedRepairs =
+                            state.getRepairsState.item;
+
+                        sortedRepairs?.sort(
+                          (a, b) => a.startDate.parseLocalDate
+                              .compareTo(b.startDate.parseLocalDate),
+                        );
+
+                        PdfDialog.openRepairPdfDialog(
+                          context: context,
+                          repairCubit: context.read<RepairCubit>(),
+                          initialDate:
+                              sortedRepairs?.first.startDate.parseLocalDate ??
+                                  DateTime(2024, 10, 10),
+                          items: sortedRepairs,
+                        );
                       },
                       icon: const Icon(Icons.print_outlined),
                       label: const Text('PDF'),

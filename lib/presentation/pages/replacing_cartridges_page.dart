@@ -2,6 +2,7 @@ import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/presentation/cubits/cartridge_cubit/cartridge_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/office_cubit/office_cubit.dart';
 import 'package:cartridge_keeper/presentation/widgets/department_filter_dropdown.dart';
+import 'package:cartridge_keeper/presentation/widgets/dialogs/pdf_dialog.dart';
 import 'package:cartridge_keeper/presentation/widgets/dialogs/replacement_cartridge_dialog.dart';
 import 'package:cartridge_keeper/presentation/widgets/replacement_cartridge_layout_grid.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,9 @@ class ReplacingCartridgesPage extends StatelessWidget {
                         context: context,
                         officeCubit: context.read<OfficeCubit>(),
                         departments: state.getDepartmentsState.item!,
-                        cartridgeCubit: context.read<CartridgeCubit>()..loadOnlyAvailableCartridges(isIncludingReplacement: true),
+                        cartridgeCubit: context.read<CartridgeCubit>()
+                          ..loadOnlyAvailableCartridges(
+                              isIncludingReplacement: true),
                       );
                     },
                     icon: const Icon(Icons.add),
@@ -150,10 +153,21 @@ class ReplacingCartridgesPage extends StatelessWidget {
               BlocBuilder<OfficeCubit, OfficeState>(
                 builder: (context, state) {
                   return ElevatedButton.icon(
-                    onPressed: () async {
-                      await context
-                          .read<OfficeCubit>()
-                          .createPDF(state.getOfficesState.item!);
+                    onPressed: () {
+                      final List<Office>? sortedOffices =
+                          state.getOfficesState.item
+                            ?..sort(
+                              (a, b) => a.replacementDate.parseLocalDate
+                                  .compareTo(b.replacementDate.parseLocalDate),
+                            );
+                      PdfDialog.openOfficePdfDialog(
+                        context: context,
+                        officeCubit: context.read<OfficeCubit>(),
+                        initialDate: sortedOffices
+                                ?.first.replacementDate.parseLocalDate ??
+                            DateTime(2024, 10, 10),
+                        items: sortedOffices,
+                      );
                     },
                     icon: const Icon(Icons.print_outlined),
                     label: const Text('PDF'),

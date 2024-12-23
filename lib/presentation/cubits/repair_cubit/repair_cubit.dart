@@ -19,14 +19,19 @@ class RepairCubit extends Cubit<RepairState> {
 
   final _repository = AppModule.getRepairRepository();
 
-  Future<void> creatingPDF(List<Repair> list) async {
+  Future<void> creatingPDF({
+    required List<Repair> list,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
     final pdf = pw.Document();
 
-    pdf.addPage(await RepairsPdf.repairsPage(list));
+    pdf.addPage(await RepairsPdf.repairsPage(list, startDate, endDate));
     String? outputFile = await FilePicker.platform.saveFile(
       lockParentWindow: true,
       dialogTitle: 'Выберите папку для сохранения',
-      fileName: 'Отчёт по ремонтам картриджей ${DateTime.now().toLocalFormat}.pdf',
+      fileName:
+          'Отчёт по ремонтам картриджей (${startDate.toLocalFormat} - ${endDate.toLocalFormat}).pdf',
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
@@ -65,17 +70,17 @@ class RepairCubit extends Cubit<RepairState> {
     await _repository.getAllRepairsByCartridge(cartridgeId).then(
           (result) => result.fold(
             (l) => emit(
-          state.copyWith(
-            getRepairsState: ModelState.failed(l.error),
-          ),
-        ),
+              state.copyWith(
+                getRepairsState: ModelState.failed(l.error),
+              ),
+            ),
             (r) => emit(
-          state.copyWith(
-            getRepairsState: ModelState.loaded(r),
+              state.copyWith(
+                getRepairsState: ModelState.loaded(r),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Future deleteRepair(int id) async {

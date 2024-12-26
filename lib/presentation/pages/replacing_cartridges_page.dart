@@ -150,27 +150,33 @@ class ReplacingCartridgesPage extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 10),
-              BlocBuilder<OfficeCubit, OfficeState>(
-                builder: (context, state) {
-                  return ElevatedButton.icon(
-                    onPressed: () {
-                      final List<Office>? sortedOffices =
-                          state.getOfficesState.item
+              BlocBuilder<DepartmentCubit, DepartmentState>(
+                builder: (context, departmentState) {
+                  return BlocBuilder<OfficeCubit, OfficeState>(
+                    builder: (context, state) {
+                      return ElevatedButton.icon(
+                        onPressed: () {
+                          final List<Office>? sortedOffices = state
+                              .getOfficesState.item
                             ?..sort(
                               (a, b) => a.replacementDate.parseLocalDate
                                   .compareTo(b.replacementDate.parseLocalDate),
                             );
-                      PdfDialog.openOfficePdfDialog(
-                        context: context,
-                        officeCubit: context.read<OfficeCubit>(),
-                        initialDate: sortedOffices
-                                ?.first.replacementDate.parseLocalDate ??
-                            DateTime(2024, 10, 10),
-                        items: sortedOffices,
+                          PdfDialog.openOfficePdfDialog(
+                            context: context,
+                            officeCubit: context.read<OfficeCubit>(),
+                            departments:
+                                departmentState.getDepartmentsState.item!,
+                            initialDate: sortedOffices
+                                    ?.first.replacementDate.parseLocalDate ??
+                                DateTime(2024, 10, 10),
+                            items: sortedOffices,
+                          );
+                        },
+                        icon: const Icon(Icons.print_outlined),
+                        label: const Text('PDF'),
                       );
                     },
-                    icon: const Icon(Icons.print_outlined),
-                    label: const Text('PDF'),
                   );
                 },
               ),

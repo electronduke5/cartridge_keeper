@@ -7,6 +7,7 @@ import 'package:cartridge_keeper/presentation/di/app_module.dart';
 import 'package:cartridge_keeper/presentation/pages/base_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -17,7 +18,7 @@ void main() {
     //set min size window
     WindowManager.instance.setMinimumSize(const Size(750, 500));
   }
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

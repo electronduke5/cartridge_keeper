@@ -22,7 +22,7 @@ abstract class RepairRepository {
     required Cartridge cartridge,
   });
 
-  Future<Either<Failure, Repair>> finishRepair({
+  Future<Either<Failure, void>> finishRepair({
     required int id,
     required String endDate,
   });

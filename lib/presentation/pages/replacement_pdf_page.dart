@@ -15,19 +15,6 @@ class ReplacementPdf {
 
     final numberOfPages = (list.length / pageSize).ceil();
 
-    int countOfInserts = 0;
-    for (int i = 0; i < list.length; i++) {
-      if (i + 1 == list.length ||
-          list[i].replacementDate != list[i + 1].replacementDate) {
-        print('i: $i , number of pages: $numberOfPages (${numberOfPages * pageSize})');
-        if(i >= numberOfPages * pageSize) {
-          print('i: $i');
-        }
-        countOfInserts++;
-      }
-    }
-    print('countOfInserts: $countOfInserts');
-
     for (int page = 0; page < numberOfPages; page++) {
       rows[page] = [
         pw.TableRow(
@@ -81,7 +68,6 @@ class ReplacementPdf {
       if (loopLimit > list.length) loopLimit = list.length;
 
       for (int index = pageSize * page; index < loopLimit; index++) {
-        print('DONE: $index/${loopLimit}');
         rows[page]!.add(
           pw.TableRow(
             children: [

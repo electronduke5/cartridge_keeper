@@ -47,7 +47,7 @@ class PrintersPage extends StatelessWidget {
                                       Theme.of(context)
                                           .cardTheme
                                           .color
-                                          ?.withOpacity(0.5)),
+                                          ?.withValues(alpha: 0.5)),
                                   columns: const [
                                     DataColumn(label: Text('ID')),
                                     DataColumn(label: Text('Марка')),

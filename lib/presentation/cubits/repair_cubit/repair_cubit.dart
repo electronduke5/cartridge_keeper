@@ -160,7 +160,7 @@ class RepairCubit extends Cubit<RepairState> {
             ),
             (r) => emit(
               state.copyWith(
-                updateRepairState: ModelState.loaded(r),
+                updateRepairState: ModelState.loaded(null),
               ),
             ),
           ),

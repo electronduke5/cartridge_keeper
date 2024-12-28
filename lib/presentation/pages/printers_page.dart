@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/printer.dart';
+import '../widgets/printer_widget.dart';
 
 class PrintersPage extends StatelessWidget {
   const PrintersPage({super.key});
@@ -37,40 +38,13 @@ class PrintersPage extends StatelessWidget {
                           const Divider(),
                           const SizedBox(height: 10),
                           Expanded(
-                            child: SizedBox.expand(
-                              child: SingleChildScrollView(
-                                child: DataTable(
-                                  clipBehavior: Clip.antiAlias,
-                                  border: TableBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  headingRowColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .cardTheme
-                                          .color
-                                          ?.withValues(alpha: 0.5)),
-                                  columns: const [
-                                    DataColumn(label: Text('ID')),
-                                    DataColumn(label: Text('Марка')),
-                                    DataColumn(label: Text('Модель')),
-                                  ],
-                                  rows: state.getPrintersState.item!
-                                      .map(
-                                        (printer) => DataRow(
-                                          color: WidgetStatePropertyAll(
-                                              Theme.of(context)
-                                                  .cardTheme
-                                                  .color),
-                                          cells: [
-                                            DataCell(
-                                                Text(printer.id.toString())),
-                                            DataCell(Text(printer.mark)),
-                                            DataCell(Text(printer.model)),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
+                            child: ListView.builder(
+                              itemCount: state.getPrintersState.item!.length,
+                              itemBuilder: (context, index) {
+                                final List<Printer> listPrinters =
+                                    state.getPrintersState.item!;
+                                return PrinterWidget(printer: listPrinters[index]);
+                              },
                             ),
                           ),
                         ],

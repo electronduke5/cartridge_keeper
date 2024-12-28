@@ -35,6 +35,9 @@ class NavigationService {
               BlocProvider<PrinterCubit>(
                 create: (_) => PrinterCubit()..loadAllPrinters(),
               ),
+              BlocProvider(
+                create: (_) => CartridgeCubit(),
+              ),
             ], child: const PrintersPage()));
       case '/cartridges':
         return _getPageRoute(
@@ -45,8 +48,10 @@ class NavigationService {
                   create: (_) => CartridgeCubit()
                     ..loadAllCartridges(
                         isRepaired: false,
-                        isReplaced: false,
-                        isDeleted: false)),
+                    isReplaced: false,
+                    isDeleted: false,
+                  ),
+              ),
             ],
             child: const CartridgesPage(),
           ),

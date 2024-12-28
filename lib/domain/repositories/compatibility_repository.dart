@@ -6,5 +6,7 @@ import '../../common/failure.dart';
 abstract class CompatibilityRepository{
   Future<Either<Failure, List<Compatibility>>> getAllCompatibility();
 
-  Future<Either<Failure, Compatibility>> createCompatibility({required printerId, required cartridgeId});
+  Future<Either<Failure, Compatibility>> createCompatibility({required printerId, required cartridgeModel});
+
+  Future<Either<Failure, String>> cleanCompatibilitiesByPrinter(int printerId);
 }

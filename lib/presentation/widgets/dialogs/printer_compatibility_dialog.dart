@@ -4,18 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/printer.dart';
 import '../../cubits/cartridge_cubit/cartridge_cubit.dart';
+import '../../cubits/compatibility_cubit/compatibility_cubit.dart';
 import '../../states/compatibility_cartridges_provider.dart';
 import '../cartidge_compatibiility_selectable_widget.dart';
+import '../snack_bar_info.dart';
 
 class CompatibilityDialog {
-  static final isAllSelectedProvider = StateProvider<bool>((ref) => false);
-
-  static Future<void> show({
+  static Future<bool?> show({
     required BuildContext context,
     required CartridgeCubit cartridgeCubit,
+    required CompatibilityCubit compatibilityCubit,
     required Printer printer,
   }) async {
-    return showDialog<void>(
+    return showDialog<bool?>(
       context: context,
       builder: (BuildContext context) {
         return BlocProvider.value(
@@ -52,7 +53,8 @@ class CompatibilityDialog {
                     final uniqueCartridgeNames =
                         ref.watch(compatibilityCartridgesProvider);
 
-                    bool isAllSelected = ref.watch(isAllSelectedProvider);
+                    bool isAllSelected = uniqueCartridgeNames.length ==
+                        compatibleCartridges.length;
 
                     if (isAllSelected &&
                         uniqueCartridgeNames.length !=
@@ -72,12 +74,10 @@ class CompatibilityDialog {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                ref.read(isAllSelectedProvider.notifier).state =
-                                    !isAllSelected;
                                 ref
                                     .read(compatibilityCartridgesProvider
                                         .notifier)
-                                    .toggleAll(uniqueCartridgeNames);
+                                    .toggleAll(compatibleCartridges);
                               },
                               child: Card(
                                 margin: const EdgeInsets.only(left: 0, top: 4),
@@ -101,22 +101,13 @@ class CompatibilityDialog {
                                 ),
                               ),
                             ),
-                            //if (!isSelected)
                             for (final cartridgeName in compatibleCartridges)
                               CartridgeCompatibilitySelectableWidget(
                                 cartridgeName: cartridgeName,
-                                isAllSelectedProvider,
                               ),
                           ],
                         ),
-                        if (uniqueCartridgeNames.isEmpty)
-                          const Text(
-                            'Выберите хотя бы один картридж.',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        if (uniqueCartridgeNames.isNotEmpty)
-                          Text(
-                              'Выбрано ${uniqueCartridgeNames.length} картриджей.'),
+                        Text('Выбрано: ${uniqueCartridgeNames.length} шт.'),
                       ],
                     );
                   },
@@ -124,11 +115,64 @@ class CompatibilityDialog {
               },
             ),
             actions: <Widget>[
-              ElevatedButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+              Consumer(builder: (context, ref, _) {
+                return ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Отмена'));
+              }),
+              BlocProvider.value(
+                value: compatibilityCubit,
+                child: BlocBuilder<CompatibilityCubit, CompatibilityState>(
+                  builder: (context, state) {
+                    return Consumer(
+                      builder: (context, ref, _) {
+                        final uniqueCartridgeNames =
+                            ref.watch(compatibilityCartridgesProvider);
+                        return ElevatedButton(
+                          onPressed: () {
+                            if (uniqueCartridgeNames.isEmpty) {
+                              SnackBarInfo.show(
+                                context: context,
+                                message:
+                                    'Выберите хотя бы одну модель картриджа',
+                                isSuccess: false,
+                              );
+                              return;
+                            }
+
+                            context
+                                .read<CompatibilityCubit>()
+                                .addCompatibilityList(
+                                  printerId: printer.id!,
+                                  cartridgeModels:
+                                      uniqueCartridgeNames.toList(),
+                                )
+                                .then((_) {
+                              SnackBarInfo.show(
+                                context: context,
+                                message:
+                                    'Добавлена совместимость картриджа \'${uniqueCartridgeNames.toList().map((model) => model).join(', ')}\' с принтером \'${printer.mark} ${printer.model}\'',
+                                isSuccess: true,
+                              );
+                            });
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            side: BorderSide(
+                              width: uniqueCartridgeNames.isEmpty ? 3 : 0,
+                              color: uniqueCartridgeNames.isEmpty
+                                  ? Colors.redAccent
+                                  : const Color(0xFF4880FF),
+                            ),
+                          ),
+                          child: const Text('OK'),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),

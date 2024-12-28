@@ -5,51 +5,92 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/printer.dart';
+import '../cubits/compatibility_cubit/compatibility_cubit.dart';
+import '../states/compatibility_cartridges_provider.dart';
 
-class PrinterWidget extends StatelessWidget {
+class PrinterWidget extends ConsumerWidget {
   const PrinterWidget({super.key, required this.printer});
 
   final Printer printer;
 
+  //final List<Compatibility> compatibilities;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        child: BlocBuilder<CompatibilityCubit, CompatibilityState>(
+          builder: (context, state) {
+            final compatibilities = state.getCompatibilitiesState.item;
+            final thisPrinterCompatibilities = compatibilities
+                ?.where((compatibility) => compatibility.printerId == printer.id)
+                .toList();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${printer.mark} ${printer.model}'),
-              ],
-            ),
-            const Row(
-              children: [
-                Text('Совместим с: '),
-                Text(
-                  '259X, 259A, 59A, 59X',
-                  style: TextStyle(
-                    color: Color(0xFF4880FF),
+                Row(
+                  children: [
+                    Text('${printer.mark} ${printer.model}'),
+                    IconButton(
+                      onPressed: () {
+                        context
+                            .read<CompatibilityCubit>()
+                            .cleanCompatibilities(printer.id!);
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: 'Удалить все совместимости',
+                    ),
+                  ],
+                ),
+                if (compatibilities == null)
+                  Text(state.getCompatibilitiesState.runtimeType.toString()),
+                if (compatibilities != null)
+                  Row(
+                    children: [
+                      const Text('Совместим с: '),
+                      Text(
+                        thisPrinterCompatibilities!.isEmpty ? ''
+                        : '${thisPrinterCompatibilities
+                            .map(
+                                (compatibility) => compatibility.cartridgeModel)
+                            .join(', ').substring(0,3)}...',
+                        style: const TextStyle(
+                          color: Color(0xFF4880FF),
+                        ),
+                      ),
+                    ],
                   ),
+                IconButton(
+                  tooltip: 'Добавить картридж для данного принтера',
+                  onPressed: () async {
+                    final compatibilities = state.getCompatibilitiesState.item!
+                        .where((compatibility) =>
+                            compatibility.printerId == printer.id)
+                        .toList();
+                    ref.read(compatibilityCartridgesProvider.notifier).addAll(
+                        compatibilities
+                            .map(
+                                (compatibility) => compatibility.cartridgeModel)
+                            .toSet());
+                    bool? resultDialog = await CompatibilityDialog.show(
+                      context: context,
+                      cartridgeCubit: context.read<CartridgeCubit>()
+                        ..loadAllCartridges(),
+                      compatibilityCubit: context.read<CompatibilityCubit>(),
+                      printer: printer,
+                    );
+                    if (resultDialog == null) {
+                      ref
+                          .read(compatibilityCartridgesProvider.notifier)
+                          .clear();
+                    }
+                  },
+                  icon: const Icon(Icons.edit_note),
                 ),
               ],
-            ),
-            Consumer(builder: (context, ref, _) {
-              return IconButton(
-                tooltip: 'Добавить картридж для данного принтера',
-                onPressed: () {
-                  CompatibilityDialog.show(
-                    context: context,
-                    cartridgeCubit: context.read<CartridgeCubit>()
-                      ..loadAllCartridges(),
-                    printer: printer,
-                  );
-                },
-                icon: const Icon(Icons.edit_note),
-              );
-            }),
-          ],
+            );
+          },
         ),
       ),
     );

@@ -8,6 +8,10 @@ final compatibilityCartridgesProvider =
 class CompatibilityCartridgesState extends StateNotifier<Set<String>> {
   CompatibilityCartridgesState() : super(<String>{});
 
+  void addAll(Set<String> cartridgeNames) {
+    state = <String>{...state, ...cartridgeNames};
+  }
+
   void addItem(String cartridgeName) {
     state = {...state, cartridgeName};
   }

@@ -9,6 +9,11 @@ final departmentSetProvider =
 class DepartmentSetState extends StateNotifier<Set<Department>> {
   DepartmentSetState() : super(<Department>{});
 
+
+  void addAll(Set<Department> departments) {
+    state = <Department>{...state, ...departments};
+  }
+
   void addItem(Department department) {
     state = {...state, department};
   }

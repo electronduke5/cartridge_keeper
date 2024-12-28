@@ -11,12 +11,12 @@ class CompatibilityRepositoryImpl
     implements CompatibilityRepository {
   @override
   Future<Either<Failure, Compatibility>> createCompatibility(
-      {required printerId, required cartridgeId}) async {
+      {required printerId, required cartridgeModel}) async {
     return await createObject(
       fromMap: (Map<String, dynamic> json) => Compatibility.fromMap(json),
       table: DatabaseRequest.tableCompatibility,
       data:
-          Compatibility(printerId: printerId, cartridgeId: cartridgeId).toMap(),
+          Compatibility(printerId: printerId, cartridgeModel: cartridgeModel).toMap(),
     ).then(
       (result) => result.fold(
         (l) => Left(l),
@@ -30,6 +30,20 @@ class CompatibilityRepositoryImpl
     return await getAll(
       fromMap: (Map<String, dynamic> json) => Compatibility.fromMap(json),
       table: DatabaseRequest.tableCompatibility,
+    ).then(
+      (result) => result.fold(
+        (l) => Left(l),
+        (r) => Right(r),
+      ),
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> cleanCompatibilitiesByPrinter(int printerId) {
+    return deleteObjectWhere(
+      table: DatabaseRequest.tableCompatibility,
+      whereColumn: 'printer_id',
+      whereArgs: [printerId],
     ).then(
       (result) => result.fold(
         (l) => Left(l),

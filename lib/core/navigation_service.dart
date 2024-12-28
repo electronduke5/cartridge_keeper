@@ -1,4 +1,5 @@
 import 'package:cartridge_keeper/data/models/cartridge.dart';
+import 'package:cartridge_keeper/presentation/cubits/compatibility_cubit/compatibility_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/department_cubit/department_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/office_cubit/office_cubit.dart';
 import 'package:cartridge_keeper/presentation/cubits/printer_cubit/printer_cubit.dart';
@@ -38,7 +39,13 @@ class NavigationService {
               BlocProvider(
                 create: (_) => CartridgeCubit(),
               ),
-            ], child: const PrintersPage()));
+              BlocProvider(
+                create: (_) => CompatibilityCubit()..loadAllCompatibilities(),
+              ),
+            ],
+            child: const PrintersPage(),
+          ),
+        );
       case '/cartridges':
         return _getPageRoute(
           routeName: settings.name!,

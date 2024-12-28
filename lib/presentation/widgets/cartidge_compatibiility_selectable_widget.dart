@@ -5,28 +5,25 @@ import '../states/compatibility_cartridges_provider.dart';
 
 
 class CartridgeCompatibilitySelectableWidget extends ConsumerStatefulWidget {
-  const CartridgeCompatibilitySelectableWidget(
-      this.isAllSelectedProvider, {
+  const CartridgeCompatibilitySelectableWidget({
         super.key,
         required this.cartridgeName,
       });
 
   final String cartridgeName;
 
-  final StateProvider isAllSelectedProvider;
 
   @override
   ConsumerState<CartridgeCompatibilitySelectableWidget> createState() =>
-      _CartidgeCompatibiilitySelectableWidgetState();
+      _CartridgeCompatibilitySelectableWidgetState();
 }
 
-class _CartidgeCompatibiilitySelectableWidgetState
+class
+_CartridgeCompatibilitySelectableWidgetState
     extends ConsumerState<CartridgeCompatibilitySelectableWidget> {
   @override
   Widget build(BuildContext context) {
     final listCartridges = ref.watch(compatibilityCartridgesProvider);
-    final isAllSelected = ref.watch(widget.isAllSelectedProvider);
-
     bool isSelected = false;
     setState(() {
       isSelected = listCartridges
@@ -38,9 +35,6 @@ class _CartidgeCompatibiilitySelectableWidgetState
     return GestureDetector(
       onTap: () {
         setState(() {
-          if (isAllSelected) {
-            ref.read(widget.isAllSelectedProvider.notifier).state = false;
-          }
           ref
               .read(compatibilityCartridgesProvider.notifier)
               .toggleItem(widget.cartridgeName);

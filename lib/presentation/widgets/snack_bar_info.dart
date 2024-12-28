@@ -9,14 +9,11 @@ class SnackBarInfo {
     final snackBar = SnackBar(
       content: Text(
         message,
-        style: TextStyle(
-          fontSize: 16,
-          color: isSuccess ? const Color(0xFF00B69B) : const Color(0xFFEF3826),
-        ),
+        style: const TextStyle(fontSize: 16, color: Colors.white),
       ),
       backgroundColor: isSuccess
-          ? const Color(0xFF00B69B).withValues(alpha: 0.1)
-          : const Color(0xFFEF3826).withValues(alpha: 0.1),
+          ? const Color(0xFF00B69B).withValues(alpha: 0.5)
+          : const Color(0xFFEF3826).withValues(alpha: 0.5),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

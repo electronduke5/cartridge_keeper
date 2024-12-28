@@ -96,8 +96,6 @@ class PdfDialog {
     );
   }
 
-  static final isAllSelectedProvider = StateProvider<bool>((ref) => true);
-
   static openOfficePdfDialog({
     required BuildContext context,
     required DateTime initialDate,
@@ -127,7 +125,7 @@ class PdfDialog {
                   Consumer(
                     builder: (context, ref, _) {
                       final set = ref.watch(departmentSetProvider);
-                      bool isAllSelected = ref.watch(isAllSelectedProvider);
+                      bool isAllSelected = set.length == departments.length;
 
                       if (isAllSelected && set.length != departments.length) {
                         set.clear();
@@ -143,9 +141,6 @@ class PdfDialog {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  ref
-                                      .read(isAllSelectedProvider.notifier)
-                                      .state = !isAllSelected;
                                   ref
                                       .read(departmentSetProvider.notifier)
                                       .toggleAll(departments);
@@ -173,11 +168,9 @@ class PdfDialog {
                                   ),
                                 ),
                               ),
-                              //if (!isSelected)
                               for (final department in departments)
                                 DepartmentSelectableWidget(
                                   department: department,
-                                  isAllSelectedProvider,
                                 ),
                             ],
                           ),

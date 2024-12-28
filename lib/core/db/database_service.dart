@@ -153,4 +153,22 @@ mixin DatabaseService<T extends Object> {
       return Left(Failure(error, error.toString(), error.getResultCode()));
     }
   }
+
+  Future<Either<Failure, String>> deleteObjectWhere({
+    required String table,
+    required String whereColumn,
+    required List<dynamic> whereArgs,
+  }) async {
+    try {
+      final resultString = await DatabaseHelper.instance
+          .deleteWhere(table, whereColumn, whereArgs)
+          .then(
+            (value) =>
+                value == 1 ? 'Успешно удалена 1 запись' : 'Ошибка удаления',
+          );
+      return Right(resultString);
+    } on DatabaseException catch (error) {
+      return Left(Failure(error, error.toString(), error.getResultCode()));
+    }
+  }
 }

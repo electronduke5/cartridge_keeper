@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/printer.dart';
+import '../cubits/compatibility_cubit/compatibility_cubit.dart';
 import '../widgets/printer_widget.dart';
 
 class PrintersPage extends StatelessWidget {
@@ -38,12 +39,23 @@ class PrintersPage extends StatelessWidget {
                           const Divider(),
                           const SizedBox(height: 10),
                           Expanded(
-                            child: ListView.builder(
-                              itemCount: state.getPrintersState.item!.length,
-                              itemBuilder: (context, index) {
-                                final List<Printer> listPrinters =
-                                    state.getPrintersState.item!;
-                                return PrinterWidget(printer: listPrinters[index]);
+                            child: BlocBuilder<CompatibilityCubit,
+                                CompatibilityState>(
+                              builder: (context, compatibilityState) {
+                                print(
+                                    'compatibilityState: ${compatibilityState.getCompatibilitiesState}');
+                                return Builder(builder: (context) {
+                                  return ListView.builder(
+                                    itemCount:
+                                        state.getPrintersState.item!.length,
+                                    itemBuilder: (context, index) {
+                                      final List<Printer> listPrinters =
+                                          state.getPrintersState.item!;
+                                      return PrinterWidget(
+                                          printer: listPrinters[index]);
+                                    },
+                                  );
+                                });
                               },
                             ),
                           ),

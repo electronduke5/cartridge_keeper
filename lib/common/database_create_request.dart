@@ -70,9 +70,8 @@ abstract class DatabaseRequest {
   static const String _createTableCompatibility =
       'CREATE TABLE $tableCompatibility ('
       'printer_id integer not NULL,'
-      'cartridge_id integer not NULL,'
-      'foreign key (printer_id) REFERENCES $tablePrinters(id),'
-      'foreign key (cartridge_id) REFERENCES $tableCartridges(id));';
+      'cartridge_model text not NULL,'
+      'foreign key (printer_id) REFERENCES $tablePrinters(id));';
 
   static const String _createTableRepairs = 'CREATE TABLE $tableRepairs ('
       'id integer not NULL primary key,'

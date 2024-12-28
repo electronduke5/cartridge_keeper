@@ -5,15 +5,13 @@ import '../../data/models/department.dart';
 import '../states/department_set_state.dart';
 
 class DepartmentSelectableWidget extends ConsumerStatefulWidget {
-  const DepartmentSelectableWidget(
-    this.isAllSelectedProvider, {
+  const DepartmentSelectableWidget({
     super.key,
     required this.department,
   });
 
   final Department department;
 
-  final StateProvider isAllSelectedProvider;
 
   @override
   ConsumerState<DepartmentSelectableWidget> createState() =>
@@ -25,7 +23,6 @@ class _DepartmentSelectableWidgetState
   @override
   Widget build(BuildContext context) {
     final listDepartments = ref.watch(departmentSetProvider);
-    final isAllSelected = ref.watch(widget.isAllSelectedProvider);
 
     bool isSelected = false;
     setState(() {
@@ -38,9 +35,6 @@ class _DepartmentSelectableWidgetState
     return GestureDetector(
       onTap: () {
         setState(() {
-          if (isAllSelected) {
-            ref.read(widget.isAllSelectedProvider.notifier).state = false;
-          }
           ref
               .read(departmentSetProvider.notifier)
               .toggleItem(widget.department);

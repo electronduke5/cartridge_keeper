@@ -30,12 +30,16 @@ class CompatibilityCubit extends Cubit<CompatibilityState> {
     );
   }
 
-  Future<void> addCompatibility(int printerId, int cartridgeId) async {
+  Future<void> addCompatibility(
+      {required int printerId, required String cartridgeModel}) async {
     emit(state.copyWith(createCompatibilityState: ModelState.loading()));
 
-    await _repository.createCompatibility(printerId: printerId, cartridgeId: cartridgeId).then(
-      (result) => result.fold(
-        (l) => emit(
+    await _repository
+        .createCompatibility(
+            printerId: printerId, cartridgeModel: cartridgeModel)
+        .then(
+          (result) => result.fold(
+            (l) => emit(
           state.copyWith(
             createCompatibilityState: ModelState.failed(l.error),
           ),
@@ -49,4 +53,46 @@ class CompatibilityCubit extends Cubit<CompatibilityState> {
     );
   }
 
+  Future<void> addCompatibilityList(
+      {required int printerId, required List<String> cartridgeModels}) async {
+    emit(state.copyWith(createCompatibilityState: ModelState.loading()));
+    for (String cartridgeModel in cartridgeModels) {
+      await _repository
+          .createCompatibility(
+              printerId: printerId, cartridgeModel: cartridgeModel)
+          .then(
+            (result) => result.fold(
+              (l) => emit(
+                state.copyWith(
+                  createCompatibilityState: ModelState.failed(l.error),
+                ),
+              ),
+              (r) => emit(
+                state.copyWith(
+                  createCompatibilityState: ModelState.loaded(r),
+                ),
+              ),
+            ),
+          );
+    }
+  }
+
+  Future<void> cleanCompatibilities(int printerId) async {
+    emit(state.copyWith(deleteCompatibilityState: ModelState.loading()));
+
+    await _repository.cleanCompatibilitiesByPrinter(printerId).then(
+      (result) => result.fold(
+        (l) => emit(
+          state.copyWith(
+            deleteCompatibilityState: ModelState.failed(l.error),
+          ),
+        ),
+        (r) => emit(
+          state.copyWith(
+            deleteCompatibilityState: ModelState.loaded(r),
+          ),
+        ),
+      ),
+    );
+  }
 }

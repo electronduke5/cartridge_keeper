@@ -34,10 +34,15 @@ class DatabaseHelper {
       options: OpenDatabaseOptions(
         version: _version,
         onConfigure: _onConfigure,
-        onCreate: (db, version) => onCreateTable(db),
-        onUpgrade: (db, oldVersion, newVersion) => onUpdateTable(db),
+        onCreate: (db, version) => onCreateTable,
+        onUpgrade: (db, oldVersion, newVersion) => _onUpgrade,
       ),
     );
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < newVersion) {
+    }
   }
 
   static String getPathForSaveDbCopy() =>
@@ -160,6 +165,12 @@ class DatabaseHelper {
     return resDelete;
   }
 
+  Future<int> deleteWhere(String table, String whereColumn, List<dynamic> whereArgs) async {
+    Database db = await instance.database;
+    int resDelete = await db.delete(table, where: '$whereColumn = ?', whereArgs: whereArgs);
+    return resDelete;
+  }
+
   Future<Map<String, dynamic>> queryById(int id, String table) async {
     Database db = await instance.database;
     List<Map<String, dynamic>> result =
@@ -192,14 +203,14 @@ class DatabaseHelper {
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
-  Future<void> onUpdateTable(Database db) async {
-    var tables = await db.query('Select name from sqlite_master');
-    for (var table in DatabaseRequest.tablesList.reversed) {
-      if (tables.where((element) => element['name'] == table).isNotEmpty) {
-        await db.execute(DatabaseRequest.deleteTable(table));
-      }
-    }
-  }
+  // Future<void> onUpdateTable(Database db) async {
+  //   var tables = await db.query('Select name from sqlite_master');
+  //   for (var table in DatabaseRequest.tablesList.reversed) {
+  //     if (tables.where((element) => element['name'] == table).isNotEmpty) {
+  //       await db.execute(DatabaseRequest.deleteTable(table));
+  //     }
+  //   }
+  // }
 
   Future<void> onDropDatabase() async {
     await instance.database.then((db) => db.close());

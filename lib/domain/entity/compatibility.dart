@@ -1,9 +1,9 @@
 class CompatibilityEntity {
   final int printerId;
-  final int cartridgeId;
+  final String cartridgeModel;
 
   CompatibilityEntity({
     required this.printerId,
-    required this.cartridgeId,
+    required this.cartridgeModel,
   });
 }

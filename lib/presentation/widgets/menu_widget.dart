@@ -99,6 +99,7 @@ class _MenuWidgetState extends State<MenuWidget> {
       dialogTitle: 'Выберите папку для сохранения',
       fileName: 'cartridge_keeper_db_copy_${DateTime.now().toLocalFormat}.db',
       type: FileType.custom,
+      initialDirectory: DatabaseHelper.getPathForSaveDbCopy(),
       allowedExtensions: ['db'],
     );
     if (outputFile != null && !outputFile.endsWith('.db')) {

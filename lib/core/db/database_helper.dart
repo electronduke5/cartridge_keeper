@@ -5,10 +5,9 @@ import 'package:cartridge_keeper/data/models/department.dart';
 import 'package:cartridge_keeper/data/models/printer.dart';
 import 'package:cartridge_keeper/domain/entity/department.dart';
 import 'package:cartridge_keeper/domain/entity/printer.dart';
-
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._instance();
@@ -40,6 +39,9 @@ class DatabaseHelper {
       ),
     );
   }
+
+  static String getPathForSaveDbCopy() =>
+      path.join(_appDocumentDirectory!.path, 'Cartridge Keeper DB dumps');
 
   Future<Map<String, dynamic>> insert(
       Map<String, dynamic> data, String table) async {

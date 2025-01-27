@@ -8,7 +8,7 @@ abstract class PrinterRepository{
 
   Future<Either<Failure, Printer>> createPrinter(String mark, String model);
 
-  Future<void> deletePrinter(int id);
+  Future<Either<Failure,String>> deletePrinter(int id);
 
   Future<Either<Failure,Printer>> updatePrinter(int id, String mark, String model);
 }

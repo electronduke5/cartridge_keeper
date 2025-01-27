@@ -148,15 +148,7 @@ class CompatibilityDialog {
                                   printerId: printer.id!,
                                   cartridgeModels:
                                       uniqueCartridgeNames.toList(),
-                                )
-                                .then((_) {
-                              SnackBarInfo.show(
-                                context: context,
-                                message:
-                                    'Добавлена совместимость картриджа \'${uniqueCartridgeNames.toList().map((model) => model).join(', ')}\' с принтером \'${printer.mark} ${printer.model}\'',
-                                isSuccess: true,
-                              );
-                            });
+                                );
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(

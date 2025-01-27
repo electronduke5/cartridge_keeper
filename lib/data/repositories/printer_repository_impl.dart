@@ -25,9 +25,17 @@ class PrinterRepositoryImpl
   }
 
   @override
-  Future<void> deletePrinter(int id) {
-    // TODO: implement deletePrinter
-    throw UnimplementedError();
+  Future<Either<Failure, String>> deletePrinter(int id) {
+    final result = deleteObject(
+      table: DatabaseRequest.tablePrinters,
+      id: id,
+    );
+    return result.then(
+      (result) => result.fold(
+        (l) => Left(l),
+        (r) => Right(r),
+      ),
+    );
   }
 
   @override

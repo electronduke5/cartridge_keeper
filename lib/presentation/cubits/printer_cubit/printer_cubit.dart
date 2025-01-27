@@ -67,4 +67,23 @@ class PrinterCubit extends Cubit<PrinterState> {
           ),
         );
   }
+
+  Future deletePrinter(int id) async {
+    emit(state.copyWith(deletePrinterState: ModelState.loading()));
+
+    await _repository.deletePrinter(id).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                deletePrinterState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                deletePrinterState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
 }

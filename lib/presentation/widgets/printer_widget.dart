@@ -13,8 +13,6 @@ class PrinterWidget extends ConsumerWidget {
 
   final Printer printer;
 
-  //final List<Compatibility> compatibilities;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
@@ -37,6 +35,10 @@ class PrinterWidget extends ConsumerWidget {
                         context
                             .read<CompatibilityCubit>()
                             .cleanCompatibilities(printer.id!);
+
+                        context
+                            .read<CompatibilityCubit>()
+                            .loadAllCompatibilities();
                       },
                       icon: const Icon(Icons.delete_outline),
                       tooltip: 'Удалить все совместимости',
@@ -45,19 +47,22 @@ class PrinterWidget extends ConsumerWidget {
                 ),
                 if (compatibilities == null)
                   Text(state.getCompatibilitiesState.runtimeType.toString()),
-                if (compatibilities != null)
+                if (compatibilities != null &&
+                    thisPrinterCompatibilities!.isNotEmpty)
                   Row(
                     children: [
                       const Text('Совместим с: '),
-                      Text(
-                        thisPrinterCompatibilities!.isEmpty ? ''
-                        : '${thisPrinterCompatibilities
-                            .map(
-                                (compatibility) => compatibility.cartridgeModel)
-                            .join(', ').substring(0,3)}...',
-                        style: const TextStyle(
-                          color: Color(0xFF4880FF),
-                        ),
+                      BlocBuilder<CompatibilityCubit, CompatibilityState>(
+                        builder: (context, state) {
+                          return Text(
+                            thisPrinterCompatibilities.length > 3
+                                ? '${thisPrinterCompatibilities[0].cartridgeModel}, ${thisPrinterCompatibilities[1].cartridgeModel}, ${thisPrinterCompatibilities[2].cartridgeModel} и ещё ${thisPrinterCompatibilities.length - 3}.'
+                                : '${thisPrinterCompatibilities.map((compatibility) => compatibility.cartridgeModel).join(', ')}.',
+                            style: const TextStyle(
+                              color: Color(0xFF4880FF),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

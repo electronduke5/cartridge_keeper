@@ -56,6 +56,7 @@ class CompatibilityCubit extends Cubit<CompatibilityState> {
   Future<void> addCompatibilityList(
       {required int printerId, required List<String> cartridgeModels}) async {
     emit(state.copyWith(createCompatibilityState: ModelState.loading()));
+    cleanCompatibilities(printerId);
     for (String cartridgeModel in cartridgeModels) {
       await _repository
           .createCompatibility(
@@ -75,6 +76,7 @@ class CompatibilityCubit extends Cubit<CompatibilityState> {
             ),
           );
     }
+    loadAllCompatibilities();
   }
 
   Future<void> cleanCompatibilities(int printerId) async {

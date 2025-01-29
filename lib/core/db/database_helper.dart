@@ -124,7 +124,7 @@ class DatabaseHelper {
       table,
       where: searchingColumns
           .map((column) => '$column LIKE \'%$searchingValue%\'')
-          .join(' AND '),
+          .join(' OR '),
     );
   }
 

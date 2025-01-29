@@ -30,6 +30,25 @@ class PrinterCubit extends Cubit<PrinterState> {
         );
   }
 
+  Future<void> searchPrinter(String searchString) async {
+    emit(state.copyWith(getPrintersState: ModelState.loading()));
+
+    await _repository.searchPrinters(searchString).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                getPrintersState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                getPrintersState: ModelState.loaded(r),
+              ),
+            ),
+          ),
+        );
+  }
+
   Future<void> addPrinter(String mark, String model) async {
     emit(state.copyWith(createPrinterState: ModelState.loading()));
 

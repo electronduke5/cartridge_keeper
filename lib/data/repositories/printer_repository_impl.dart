@@ -66,4 +66,19 @@ class PrinterRepositoryImpl
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, List<Printer>>> searchPrinters(
+      String searchingValue) async {
+    final printers = await search(
+      fromMap: (Map<String, dynamic> json) => Printer.fromMap(json),
+      table: DatabaseRequest.tablePrinters,
+      searchingColumns: ['mark', 'model'],
+      searchingValue: searchingValue,
+    );
+    return printers.fold(
+      (l) => Left(l),
+      (r) => Right(r),
+    );
+  }
 }

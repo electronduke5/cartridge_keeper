@@ -11,4 +11,6 @@ abstract class PrinterRepository{
   Future<Either<Failure,String>> deletePrinter(int id);
 
   Future<Either<Failure,Printer>> updatePrinter(int id, String mark, String model);
+
+  Future<Either<Failure, List<Printer>>> searchPrinters(String searchingValue);
 }

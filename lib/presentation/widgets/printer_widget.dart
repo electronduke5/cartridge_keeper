@@ -81,25 +81,21 @@ class PrinterWidget extends ConsumerWidget {
                     ],
                   ),
                   if (compatibilities == null)
-                    Text(state.getCompatibilitiesState.runtimeType.toString()),
+                    const Text('Загрузка совместимостей...'),
                   if (compatibilities != null &&
                     thisPrinterCompatibilities!.isNotEmpty)
                     Wrap(
                       children: [
                         const Text('Совместим с: '),
-                        BlocBuilder<CompatibilityCubit, CompatibilityState>(
-                          builder: (context, state) {
-                            return Text(
-                              thisPrinterCompatibilities.length > 3
-                                ? '${thisPrinterCompatibilities[0].cartridgeModel}, ${thisPrinterCompatibilities[1].cartridgeModel}, ${thisPrinterCompatibilities[2].cartridgeModel} и ещё ${thisPrinterCompatibilities.length - 3}.'
-                                : '${thisPrinterCompatibilities.map((compatibility) => compatibility.cartridgeModel).join(', ')}.',
-                            style: const TextStyle(
-                              color: Color(0xFF4880FF),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                        Text(
+                          thisPrinterCompatibilities.length > 3
+                              ? '${thisPrinterCompatibilities[0].cartridgeModel}, ${thisPrinterCompatibilities[1].cartridgeModel}, ${thisPrinterCompatibilities[2].cartridgeModel} и ещё ${thisPrinterCompatibilities.length - 3}.'
+                              : '${thisPrinterCompatibilities.map((compatibility) => compatibility.cartridgeModel).join(', ')}.',
+                          style: const TextStyle(
+                            color: Color(0xFF4880FF),
+                          ),
+                        ),
+                      ],
                   ),
                   Row(
                     children: [

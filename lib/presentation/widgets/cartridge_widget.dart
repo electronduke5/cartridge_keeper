@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/navigation_service.dart';
+import '../../data/models/printer.dart';
 import '../cubits/cartridge_cubit/cartridge_cubit.dart';
 import 'dialogs/add_cartridge_dialog.dart';
 
 class CartridgeWidget extends StatelessWidget {
-  const CartridgeWidget({super.key, required this.cartridge});
+  const CartridgeWidget(
+      {super.key,
+      required this.cartridge,
+      required this.compatibilityPrinters});
 
   final Cartridge cartridge;
+
+  final List<Printer>? compatibilityPrinters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,7 @@ class CartridgeWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: FittedBox(
                       child: Column(
                         children: [
@@ -52,15 +58,41 @@ class CartridgeWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Column(
-                    children: [
-                      const Text('Инв. номер:'),
-                      Text(
-                        cartridge.inventoryNumber ?? '-',
-                        style: const TextStyle(fontSize: 25),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        const Text('Инв. номер:'),
+                        Text(
+                          cartridge.inventoryNumber ?? '-',
+                          style: const TextStyle(fontSize: 25),
+                        ),
+                      ],
+                    ),
                   ),
+                  () {
+                    if (compatibilityPrinters != null &&
+                        compatibilityPrinters!.isNotEmpty) {
+                      return Row(
+                        children: [
+                          const Text('Совместим с: '),
+                          Wrap(
+                            children: [
+                              Text(
+                                compatibilityPrinters!.length > 1
+                                    ? '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model} и ещё ${compatibilityPrinters!.length - 1}'
+                                    : '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model}',
+                                style: const TextStyle(
+                                  color: Color(0xFF4880FF),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                    return const SizedBox();
+                  }(),
                   const SizedBox(width: 20),
                   if (cartridge.isInRepair)
                     const Text(

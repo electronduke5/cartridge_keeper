@@ -1,4 +1,6 @@
+import 'package:cartridge_keeper/data/models/compatibility.dart';
 import 'package:cartridge_keeper/presentation/cubits/cartridge_cubit/cartridge_cubit.dart';
+import 'package:cartridge_keeper/presentation/cubits/compatibility_cubit/compatibility_cubit.dart';
 import 'package:cartridge_keeper/presentation/widgets/cartridge_widget.dart';
 import 'package:cartridge_keeper/presentation/widgets/dialogs/add_cartridge_dialog.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/cartridge.dart';
+import '../../data/models/printer.dart';
 import '../cubits/model_state.dart';
+import '../cubits/printer_cubit/printer_cubit.dart';
 import '../widgets/cartridge_filter_dropdown.dart';
 
 class CartridgesPage extends StatelessWidget {
@@ -74,23 +78,58 @@ class CartridgesPage extends StatelessWidget {
                   case LoadingState<List<Cartridge>> _:
                     return const Center(child: CircularProgressIndicator());
                   case LoadedState<List<Cartridge>> _:
-                    return SizedBox.expand(child: () {
-                      if (state.getCartridgesState.item == null ||
-                          state.getCartridgesState.item!.isEmpty) {
-                        return const Center(child: Text('Картриджей нет'));
-                      } else {
-                        return ListView.builder(
-                          itemBuilder: (context, index) {
-                            state.getCartridgesState.item!
-                                .sort((a, b) => a.model.compareTo(b.model));
-                            final cartridge =
-                                state.getCartridgesState.item![index];
-                            return CartridgeWidget(cartridge: cartridge);
+                    return BlocBuilder<CompatibilityCubit, CompatibilityState>(
+                      builder: (context, compState) {
+                        return BlocBuilder<PrinterCubit, PrinterState>(
+                          builder: (context, printerState) {
+                            return SizedBox.expand(child: () {
+                              if (state.getCartridgesState.item == null ||
+                                  state.getCartridgesState.item!.isEmpty) {
+                                return const Center(
+                                    child: Text('Картриджей нет'));
+                              } else {
+                                return ListView.builder(
+                                  itemBuilder: (context, index) {
+                                    state.getCartridgesState.item!.sort(
+                                        (a, b) => a.model.compareTo(b.model));
+                                    final Cartridge cartridge =
+                                        state.getCartridgesState.item![index];
+
+                                    return FutureBuilder(
+                                        future: getPrintersFromCompatibility(
+                                            cartridge.model,
+                                            compState.getCompatibilitiesState
+                                                    .item
+                                                    ?.toList() ??
+                                                [],
+                                            printerState
+                                                    .getPrintersState.item ??
+                                                []),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return CartridgeWidget(
+                                                cartridge: cartridge,
+                                                compatibilityPrinters: []);
+                                          }
+                                          final List<Printer>
+                                              printersFromCompatibility =
+                                              snapshot.data as List<Printer>;
+                                          return CartridgeWidget(
+                                              cartridge: cartridge,
+                                              compatibilityPrinters:
+                                                  printersFromCompatibility);
+                                        });
+                                  },
+                                  itemCount:
+                                      state.getCartridgesState.item!.length,
+                                );
+                              }
+                            }());
                           },
-                          itemCount: state.getCartridgesState.item!.length,
                         );
-                      }
-                    }());
+                      },
+                    );
 
                   case FailedState<List<Cartridge>> _:
                     return Center(
@@ -121,4 +160,22 @@ class CartridgesPage extends StatelessWidget {
       ),
     ));
   }
+}
+
+Future<List<Printer>> getPrintersFromCompatibility(String cartridgeModel,
+    List<Compatibility> compatibilities, List<Printer> allPrinters) async {
+  final List<Compatibility> thisCartridgeCompatibilities = compatibilities
+      .where((compatibility) => compatibility.cartridgeModel == cartridgeModel)
+      .toList();
+
+  final List<int> thisCartridgePrinters = thisCartridgeCompatibilities
+      .map((compatibility) => compatibility.printerId)
+      .toList();
+
+  final List<Printer> printersFromCompatibility = thisCartridgePrinters
+      .map((printerId) =>
+          allPrinters.firstWhere((printer) => printer.id == printerId))
+      .toList();
+
+  return printersFromCompatibility;
 }

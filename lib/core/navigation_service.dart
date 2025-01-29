@@ -59,6 +59,12 @@ class NavigationService {
                     isDeleted: false,
                   ),
               ),
+              BlocProvider(
+                create: (_) => CompatibilityCubit()..loadAllCompatibilities(),
+              ),
+              BlocProvider(
+                create: (_) => PrinterCubit()..loadAllPrinters(),
+              ),
             ],
             child: const CartridgesPage(),
           ),

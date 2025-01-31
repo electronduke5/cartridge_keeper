@@ -9,6 +9,7 @@ import 'package:cartridge_keeper/presentation/pages/replacing_cartridges_page.da
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../data/models/printer.dart';
 import '../presentation/cubits/cartridge_cubit/cartridge_cubit.dart';
 import '../presentation/pages/cartridge_info_page.dart';
 import '../presentation/pages/cartridges_page.dart';
@@ -104,7 +105,11 @@ class NavigationService {
         );
       case '/cartridge-info':
         final Cartridge cartridge =
-            (settings.arguments as Set<Cartridge>).first;
+            (settings.arguments as Set<Object?>).first as Cartridge;
+
+        final List<Printer>? compatibilityPrinters =
+            (settings.arguments as Set<Object?>).last as List<Printer>?;
+
         return _getPageRoute(
           routeName: settings.name!,
           viewToShow: MultiBlocProvider(
@@ -120,6 +125,7 @@ class NavigationService {
             ],
             child: CartridgeInfoPage(
               cartridge: cartridge,
+              compatibilityPrinters: compatibilityPrinters,
             ),
           ),
         );

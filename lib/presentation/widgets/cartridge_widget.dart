@@ -31,7 +31,7 @@ class CartridgeWidget extends StatelessWidget {
           onTap: () {
             NavigationService.navigateTo(
               '/cartridge-info',
-              arguments: {cartridge},
+              arguments: {cartridge, compatibilityPrinters},
             );
           },
           child: Card(

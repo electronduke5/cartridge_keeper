@@ -6,15 +6,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/cartridge.dart';
 import '../../data/models/office.dart';
+import '../../data/models/printer.dart';
 import '../../data/models/repair.dart';
 import '../cubits/model_state.dart';
 import '../widgets/repair_card_widget.dart';
 import '../widgets/replacement_cartridge_widget.dart';
 
 class CartridgeInfoPage extends StatelessWidget {
-  const CartridgeInfoPage({super.key, required this.cartridge});
+  const CartridgeInfoPage(
+      {super.key,
+      required this.cartridge,
+      required this.compatibilityPrinters});
 
   final Cartridge cartridge;
+  final List<Printer>? compatibilityPrinters;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,14 @@ class CartridgeInfoPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 15.0),
-              child: buildCartridgeInfoCard(),
+              child: Wrap(
+                runSpacing: 10.0,
+                spacing: 10.0,
+                children: [
+                  buildCartridgeInfoCard(),
+                  buildCompatibilityPrintersInfoCard(),
+                ],
+              ),
             ),
             const SizedBox(height: 15),
             const Divider(),
@@ -180,6 +192,71 @@ class CartridgeInfoPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget buildCompatibilityPrintersInfoCard() {
+    return () {
+      if (compatibilityPrinters != null && compatibilityPrinters!.isNotEmpty) {
+        return Card(
+          margin: EdgeInsets.zero,
+          child: SizedBox(
+            height: 165,
+            width: 430,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Совместим с ${compatibilityPrinters!.length} принтерами:',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildPrinterColumns(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+      return const SizedBox();
+    }();
+  }
+
+  List<Widget> _buildPrinterColumns() {
+    final int compatibilityPrintersLength = compatibilityPrinters!.length;
+    final int maxColumnLength = (compatibilityPrintersLength / 2).ceil();
+    const int countOfColumns = 2;
+
+    List<Widget> columns = [];
+    for (int i = 0; i < countOfColumns; i++) {
+      columns.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: compatibilityPrinters!
+                .skip(i * maxColumnLength)
+                .take(maxColumnLength)
+                .map((printer) => Text(
+                      '${printer.mark} ${printer.model}',
+                      style: const TextStyle(
+                        color: Color(0xFF4880FF),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      );
+    }
+    return columns;
   }
 
   Card buildCartridgeInfoCard() {

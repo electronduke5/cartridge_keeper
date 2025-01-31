@@ -14,8 +14,8 @@ class BasePage extends StatelessWidget {
       body: Row(
         children: [
           SizedBox(
-              width: MediaQuery.sizeOf(context).width > 830 ? 200 : 60,
-              child: MediaQuery.sizeOf(context).width > 830
+              width: MediaQuery.sizeOf(context).width > 880 ? 200 : 60,
+              child: MediaQuery.sizeOf(context).width > 880
                   ? const MenuWidget()
                   : const MenuIconWidget()),
           Expanded(

@@ -38,131 +38,96 @@ class CartridgeWidget extends StatelessWidget {
             margin: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Row(
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: FittedBox(
-                      child: Column(
-                        children: [
-                          const Text('Модель:'),
-                          Wrap(
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 10.0,
+                    children: [
+                      FittedBox(
+                        child: Column(
+                          children: [
+                            const Text('Модель:'),
+                            Wrap(
+                              children: [
+                                Text(
+                                  cartridge.model,
+                                  style: const TextStyle(fontSize: 25),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          children: [
+                            const Text('Инв. номер:'),
+                            Text(
+                              cartridge.inventoryNumber ?? '-',
+                              style: const TextStyle(fontSize: 25),
+                            ),
+                          ],
+                        ),
+                      ),
+                      () {
+                        if (compatibilityPrinters != null &&
+                            compatibilityPrinters!.isNotEmpty) {
+                          return Wrap(
                             children: [
-                              Text(
-                                cartridge.model,
-                                style: const TextStyle(fontSize: 25),
+                              const Text('Совместим с: '),
+                              Wrap(
+                                children: [
+                                  Text(
+                                    compatibilityPrinters!.length > 1
+                                        ? '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model} и ещё ${compatibilityPrinters!.length - 1}'
+                                        : '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model}',
+                                    style: const TextStyle(
+                                      color: Color(0xFF4880FF),
+                                    ),
+                                  )
+                                ],
                               ),
                             ],
+                          );
+                        }
+                        return const SizedBox();
+                      }(),
+                      const SizedBox(width: 20),
+                      if (cartridge.isInRepair)
+                        const Text(
+                          'В ремонте',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.red,
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        const Text('Инв. номер:'),
-                        Text(
-                          cartridge.inventoryNumber ?? '-',
-                          style: const TextStyle(fontSize: 25),
                         ),
-                      ],
-                    ),
-                  ),
-                  () {
-                    if (compatibilityPrinters != null &&
-                        compatibilityPrinters!.isNotEmpty) {
-                      return Row(
-                        children: [
-                          const Text('Совместим с: '),
-                          Wrap(
-                            children: [
-                              Text(
-                                compatibilityPrinters!.length > 1
-                                    ? '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model} и ещё ${compatibilityPrinters!.length - 1}'
-                                    : '${compatibilityPrinters![0].mark} ${compatibilityPrinters![0].model}',
-                                style: const TextStyle(
-                                  color: Color(0xFF4880FF),
-                                ),
-                              )
-                            ],
+                      if (cartridge.isReplaced)
+                        const Text(
+                          'В принтере',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.orangeAccent,
                           ),
-                        ],
-                      );
-                    }
-                    return const SizedBox();
-                  }(),
-                  const SizedBox(width: 20),
-                  if (cartridge.isInRepair)
-                    const Text(
-                      'В ремонте',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                      ),
-                    ),
-                  if (cartridge.isReplaced)
-                    const Text(
-                      'В принтере',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.orangeAccent,
-                      ),
-                    ),
-                  const Expanded(child: SizedBox()),
+                        ),
+                      //const Expanded(child: SizedBox()),
+                    ],
+                  ),
+                  const Spacer(),
                   BlocBuilder<CartridgeCubit, CartridgeState>(
                     builder: (context, state) {
-                      return Row(
+                      return Wrap(
+                        alignment: WrapAlignment.end,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              if (cartridge.isDeleted) {
-                                context
-                                    .read<CartridgeCubit>()
-                                    .restoreCartridge(cartridge.id)
-                                    .then((value) => context
-                                        .read<CartridgeCubit>()
-                                        .loadAllCartridges(
-                                            isDeleted: state.viewIsDeleted));
-                              } else {
-                                CartridgeDialogs.openDialog(
-                                  context: context,
-                                  cartridgeCubit:
-                                      context.read<CartridgeCubit>(),
-                                  cartridge: cartridge,
-                                );
-                              }
-                            },
-                            tooltip: cartridge.isDeleted
-                                ? 'Восстановить'
-                                : 'Редактировать',
-                            icon: Icon(
-                              cartridge.isDeleted
-                                  ? Icons.restore
-                                  : Icons.edit_note,
-                            ),
-                            color: cartridge.isDeleted
-                                ? Colors.blue
-                                : Colors.orangeAccent,
-                          ),
+                          buildEditIconBtn(context, state),
                           const SizedBox(width: 10),
-                          if (!cartridge.isReplaced && !cartridge.isInRepair ||
+                          if (!cartridge.isReplaced &&
+                              !cartridge.isInRepair ||
                               !cartridge.isDeleted)
-                            IconButton(
-                              tooltip: 'Удалить',
-                              onPressed: () async {
-                                await context
-                                    .read<CartridgeCubit>()
-                                    .deleteCartridge(cartridge.id)
-                                    .then((value) => context
-                                        .read<CartridgeCubit>()
-                                        .loadAllCartridges(
-                                            isDeleted: state.viewIsDeleted));
-                              },
-                              icon: const Icon(Icons.delete_outline),
-                              color: Colors.red,
-                            ),
+                            buildDeleteIconBtn(context, state),
                         ],
                       );
                     },
@@ -173,6 +138,44 @@ class CartridgeWidget extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  IconButton buildDeleteIconBtn(BuildContext context, CartridgeState state) {
+    return IconButton(
+      tooltip: 'Удалить',
+      onPressed: () async {
+        await context.read<CartridgeCubit>().deleteCartridge(cartridge.id).then(
+            (value) => context
+                .read<CartridgeCubit>()
+                .loadAllCartridges(isDeleted: state.viewIsDeleted));
+      },
+      icon: const Icon(Icons.delete_outline),
+      color: Colors.red,
+    );
+  }
+
+  IconButton buildEditIconBtn(BuildContext context, CartridgeState state) {
+    return IconButton(
+      onPressed: () {
+        if (cartridge.isDeleted) {
+          context.read<CartridgeCubit>().restoreCartridge(cartridge.id).then(
+              (value) => context
+                  .read<CartridgeCubit>()
+                  .loadAllCartridges(isDeleted: state.viewIsDeleted));
+        } else {
+          CartridgeDialogs.openDialog(
+            context: context,
+            cartridgeCubit: context.read<CartridgeCubit>(),
+            cartridge: cartridge,
+          );
+        }
+      },
+      tooltip: cartridge.isDeleted ? 'Восстановить' : 'Редактировать',
+      icon: Icon(
+        cartridge.isDeleted ? Icons.restore : Icons.edit_note,
+      ),
+      color: cartridge.isDeleted ? Colors.blue : Colors.orangeAccent,
     );
   }
 }

@@ -200,7 +200,7 @@ class CartridgeInfoPage extends StatelessWidget {
         return Card(
           margin: EdgeInsets.zero,
           child: SizedBox(
-            height: 165,
+            height: 120,
             width: 430,
             child: Padding(
               padding: const EdgeInsets.all(10.0),

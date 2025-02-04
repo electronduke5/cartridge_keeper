@@ -54,17 +54,26 @@ class RepairsPage extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 final List<Repair> listRepairs =
                                     state.getRepairsState.item!;
-                                listRepairs.sort(
-                                  (a, b) => b.startDate.parseLocalDate
-                                      .compareTo(a.startDate.parseLocalDate),
-                                );
+
+                                listRepairs.sort((a, b) {
+                                  if (a.startDate == null ||
+                                      a.startDate!.isEmpty) {
+                                    return -1;
+                                  }
+                                  if (b.startDate == null ||
+                                      b.startDate!.isEmpty) {
+                                    return 1;
+                                  }
+                                  return b.startDate!.parseLocalDate
+                                      .compareTo(a.startDate!.parseLocalDate);
+                                });
 
                                 final repair = listRepairs[index];
                                 final previousRepair =
                                     index > 0 ? listRepairs[index - 1] : null;
                                 final isNewDate = previousRepair == null ||
-                                    repair.startDate.parseLocalDate !=
-                                        previousRepair.startDate.parseLocalDate;
+                                    repair.startDate !=
+                                        previousRepair.startDate;
 
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +102,7 @@ class RepairsPage extends StatelessWidget {
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 8.0),
                                               child: Text(
-                                                '${repair.startDate} (${listRepairs.where((r) => r.startDate == repair.startDate).length} шт.)',
+                                                '${repair.startDate == '' ? 'Готовы к ремонту' : repair.startDate} (${listRepairs.where((r) => r.startDate == repair.startDate).length} шт.)',
                                                 style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -158,16 +167,22 @@ class RepairsPage extends StatelessWidget {
                         final List<Repair>? sortedRepairs =
                             state.getRepairsState.item;
 
+                        // sortedRepairs?.sort(
+                        //   (a, b) => a.startDate.parseLocalDate
+                        //       .compareTo(b.startDate.parseLocalDate),
+                        // );
                         sortedRepairs?.sort(
-                          (a, b) => a.startDate.parseLocalDate
-                              .compareTo(b.startDate.parseLocalDate),
+                          (a, b) => b.startDate == null
+                              ? 1
+                              : a.startDate!.parseLocalDate
+                                  .compareTo(b.startDate!.parseLocalDate),
                         );
 
                         PdfDialog.openRepairPdfDialog(
                           context: context,
                           repairCubit: context.read<RepairCubit>(),
                           initialDate:
-                              sortedRepairs?.first.startDate.parseLocalDate ??
+                              sortedRepairs?.first.startDate?.parseLocalDate ??
                                   DateTime(2024, 10, 10),
                           items: sortedRepairs,
                         );

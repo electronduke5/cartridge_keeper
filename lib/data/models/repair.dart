@@ -5,7 +5,7 @@ import 'cartridge.dart';
 class Repair extends RepairEntity {
   Repair({
     super.id,
-    required super.startDate,
+    super.startDate,
     super.endDate,
     required super.cartridge,
   });

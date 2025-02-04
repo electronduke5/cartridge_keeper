@@ -164,8 +164,10 @@ class CartridgeInfoPage extends StatelessWidget {
                             state.getRepairsState.item!;
 
                         listRepairs.sort(
-                          (a, b) => b.startDate.parseLocalDate
-                              .compareTo(a.startDate.parseLocalDate),
+                          (a, b) => b.startDate == null
+                              ? 1
+                              : b.startDate!.parseLocalDate
+                                  .compareTo(a.startDate!.parseLocalDate),
                         );
                         return ListView.builder(
                           itemCount: listRepairs.length,

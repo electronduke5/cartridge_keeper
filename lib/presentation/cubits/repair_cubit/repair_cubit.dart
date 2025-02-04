@@ -1,16 +1,15 @@
 import 'dart:io';
 
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/presentation/pages/repairs_pdf_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../../../data/models/cartridge.dart';
 import '../../../data/models/repair.dart';
 import '../../di/app_module.dart';
 import '../model_state.dart';
-
-import 'package:cartridge_keeper/common/extensions/date_extension.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 part 'repair_state.dart';
 
@@ -102,7 +101,7 @@ class RepairCubit extends Cubit<RepairState> {
         );
   }
 
-  Future<void> addRepair(String startDate, Cartridge cartridge) async {
+  Future<void> addRepair(String? startDate, Cartridge cartridge) async {
     emit(state.copyWith(createRepairState: ModelState.loading()));
     await _repository
         .createRepair(startDate: startDate, cartridge: cartridge)
@@ -152,6 +151,25 @@ class RepairCubit extends Cubit<RepairState> {
     emit(state.copyWith(updateRepairState: ModelState.loading()));
 
     await _repository.finishRepair(id: id, endDate: endDate).then(
+          (result) => result.fold(
+            (l) => emit(
+              state.copyWith(
+                updateRepairState: ModelState.failed(l.error),
+              ),
+            ),
+            (r) => emit(
+              state.copyWith(
+                updateRepairState: ModelState.loaded(null),
+              ),
+            ),
+          ),
+        );
+  }
+
+  Future<void> sendToRepair(int id) async {
+    emit(state.copyWith(updateRepairState: ModelState.loading()));
+
+    await _repository.startRepair(id: id).then(
           (result) => result.fold(
             (l) => emit(
               state.copyWith(

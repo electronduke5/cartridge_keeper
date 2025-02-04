@@ -11,7 +11,7 @@ abstract class RepairRepository {
   Future<Either<Failure,String>> deleteRepair(int id);
 
   Future<Either<Failure,Repair>> createRepair({
-    required String startDate,
+    required String? startDate,
     required Cartridge cartridge,
   });
 
@@ -26,4 +26,6 @@ abstract class RepairRepository {
     required int id,
     required String endDate,
   });
+
+  Future<Either<Failure, void>> startRepair({required int id});
 }

@@ -48,12 +48,16 @@ class RepairCardWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(width: 20),
-                  Column(
+                  if (repair.startDate == '')
+                    const Text('Ещё не отправлен на ремонт.',
+                        style: TextStyle(color: Colors.blue)),
+                  if (repair.startDate != '')
+                    Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Дата отправки: ${repair.startDate}'),
-                      Wrap(
-                        children: [
+                        Wrap(
+                          children: [
                           const Text('Дата возврата: '),
                           Text(
                             repair.endDate ?? 'Ещё в ремонте',
@@ -74,7 +78,8 @@ class RepairCardWidget extends StatelessWidget {
                     return Wrap(
                       children: [
                         () {
-                          if (repair.endDate == null) {
+                          if (repair.endDate == null &&
+                              repair.startDate != '') {
                             return IconButton(
                               tooltip: 'Вернуть из ремонта',
                               onPressed: () async {
@@ -91,6 +96,20 @@ class RepairCardWidget extends StatelessWidget {
                               icon: const Icon(
                                 Icons.task_alt,
                                 color: Colors.green,
+                              ),
+                            );
+                          } else if (repair.endDate == null &&
+                              repair.startDate == '') {
+                            return IconButton(
+                              tooltip: 'Отправить на ремонт',
+                              onPressed: () async {
+                                context.read<RepairCubit>()
+                                  ..sendToRepair(repair.id)
+                                  ..loadAllRepairs();
+                              },
+                              icon: const Icon(
+                                Icons.send,
+                                color: Colors.blue,
                               ),
                             );
                           }

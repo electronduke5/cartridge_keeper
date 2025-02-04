@@ -1,4 +1,5 @@
 import 'package:cartridge_keeper/common/database_create_request.dart';
+import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/core/db/database_service.dart';
 import 'package:cartridge_keeper/data/models/repair.dart';
 import 'package:dartz/dartz.dart';
@@ -12,7 +13,7 @@ class RepairRepositoryImpl
     implements RepairRepository {
   @override
   Future<Either<Failure, Repair>> createRepair(
-      {required String startDate, required Cartridge cartridge}) async {
+      {required String? startDate, required Cartridge cartridge}) async {
     return await createObject(
       fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
       table: DatabaseRequest.tableRepairs,
@@ -68,6 +69,20 @@ class RepairRepositoryImpl
       id: id,
       table: DatabaseRequest.tableRepairs,
       data: {'end_date': endDate},
+    );
+    return repair.fold(
+      (l) => Left(l),
+      (r) => Right(r),
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> startRepair({required int id}) async {
+    final repair = await updateObject(
+      fromMap: (Map<String, dynamic> json) => Repair.fromMap(json),
+      id: id,
+      table: DatabaseRequest.tableRepairs,
+      data: {'start_date': DateTime.now().toLocalFormat},
     );
     return repair.fold(
       (l) => Left(l),

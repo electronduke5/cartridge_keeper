@@ -68,7 +68,7 @@ class RepairsPdf {
                 style: pw.TextStyle(font: ttf),
               ),
               pw.Text(
-                list[index].startDate,
+                list[index].startDate ?? '-',
                 textAlign: pw.TextAlign.center,
                 style: pw.TextStyle(font: ttf),
               ),

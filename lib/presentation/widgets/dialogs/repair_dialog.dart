@@ -2,6 +2,7 @@ import 'package:cartridge_keeper/common/extensions/date_extension.dart';
 import 'package:cartridge_keeper/presentation/cubits/model_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../data/models/cartridge.dart';
 import '../../../data/models/repair.dart';
 import '../../cubits/cartridge_cubit/cartridge_cubit.dart';
@@ -21,7 +22,7 @@ class RepairDialogs {
     required CartridgeCubit cartridgeCubit,
   }) {
     TextEditingController startDateController = TextEditingController(
-      text: repair?.startDate.toString() ?? DateTime.now().toLocalFormat,
+      text: repair?.startDate.toString() ?? '',
     );
     TextEditingController endDateController =
         TextEditingController(text: repair?.endDate.toString());
@@ -113,14 +114,16 @@ class RepairDialogs {
                           );
                         }
                       }(),
-                      const Padding(
+                      if (repair != null)
+                        const Padding(
                         padding: EdgeInsets.only(top: 10, bottom: 5),
                         child: Text('Дата начала ремонта'),
                       ),
-                      StartDateFormField(
+                      if (repair != null)
+                        StartDateFormField(
                         startDateController: startDateController,
-                        endDate: repair?.endDate?.parseLocalDate,
-                      ),
+                          endDate: repair.endDate?.parseLocalDate,
+                        ),
                       () {
                         if (repair != null) {
                           return Column(

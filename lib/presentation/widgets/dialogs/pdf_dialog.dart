@@ -67,7 +67,7 @@ class PdfDialog {
                             .parseLocalDate;
                         final itemsInPeriod = items.where((item) {
                           final DateTime startDate =
-                              item.startDate.parseLocalDate;
+                              item.startDate?.parseLocalDate ?? DateTime.now();
 
                           return startDate.isAfter(firstDate) ||
                               startDate.isAtSameMomentAs(firstDate) &&

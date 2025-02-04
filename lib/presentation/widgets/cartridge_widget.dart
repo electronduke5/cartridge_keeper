@@ -116,7 +116,6 @@ class CartridgeWidget extends StatelessWidget {
                       //const Expanded(child: SizedBox()),
                     ],
                   ),
-                  const Spacer(),
                   BlocBuilder<CartridgeCubit, CartridgeState>(
                     builder: (context, state) {
                       return Wrap(

@@ -1,16 +1,8 @@
-# cartridge_keeper
+# Cartridge Keeper
 
-The app for accounting cartridges
+Приложение для учета картриджей для принтеров в ГАУЗ "ВОКСП".
 
-## Getting Started
+## Автор
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [@electronduke5](https://github.com/electronduke5) <- GitHub
+- [@g_pav5](https://t.me/g_pav5) <- Telegram
